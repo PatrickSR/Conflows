@@ -1,7 +1,7 @@
 import path from 'path';
 import type { WorkflowFile } from '../types/index.js';
 import { fs } from '../utils/fs.js';
-import { getAdapter } from '../adapters/index.js';
+import { getAdapter, getAllIDENames } from '../adapters/index.js';
 
 /**
  * 文件扫描器
@@ -54,8 +54,10 @@ export class Scanner {
   async scanAll(): Promise<Map<string, WorkflowFile[]>> {
     const results = new Map<string, WorkflowFile[]>();
     
-    // 只扫描 cursor 和 windsurf
-    for (const ideName of ['cursor', 'windsurf']) {
+    // 动态获取所有已注册的 IDE
+    const ideNames = getAllIDENames();
+    
+    for (const ideName of ideNames) {
       const files = await this.scan(ideName);
       results.set(ideName, files);
     }

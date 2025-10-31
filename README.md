@@ -27,17 +27,16 @@ sync-workflow detect
 ### 单向同步
 
 ```bash
-# Windsurf → Cursor
+# 从一个 IDE 同步到另一个 IDE
 sync-workflow sync --from windsurf --to cursor
-
-# Cursor → Windsurf
 sync-workflow sync --from cursor --to windsurf
 ```
 
 ### 双向同步
 
 ```bash
-sync-workflow sync --both
+# 两个 IDE 之间双向同步
+sync-workflow sync --from cursor --to windsurf --both
 ```
 
 ### 列出所有工作流
@@ -45,6 +44,14 @@ sync-workflow sync --both
 ```bash
 sync-workflow list
 ```
+
+### 支持的 IDE
+
+当前支持的 IDE：
+- `cursor` - Cursor 编辑器
+- `windsurf` - Windsurf 编辑器
+
+更多 IDE 支持正在开发中...
 
 ## 工作流格式
 

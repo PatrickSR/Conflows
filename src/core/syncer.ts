@@ -28,12 +28,16 @@ export class Syncer {
    * @throws 如果选项不完整则抛出异常
    */
   async sync(options: SyncOptions): Promise<void> {
+    if (!options.from || !options.to) {
+      throw new Error('请指定 --from 和 --to');
+    }
+    
     if (options.both) {
-      await this.syncBoth(options.force || false);
-    } else if (options.from && options.to) {
-      await this.syncOneWay(options.from, options.to, options.force || false);
+      // 双向同步
+      await this.syncBidirectional(options.from, options.to, options.force || false);
     } else {
-      throw new Error('请指定 --from 和 --to，或使用 --both');
+      // 单向同步
+      await this.syncOneWay(options.from, options.to, options.force || false);
     }
   }
   
@@ -135,7 +139,7 @@ export class Syncer {
   /**
    * 双向同步
    * 
-   * 将 Cursor 和 Windsurf 的工作流文件进行双向同步
+   * 将两个 IDE 的工作流文件进行双向同步
    * 
    * 流程：
    * 1. 扫描两个 IDE 的文件
@@ -144,32 +148,37 @@ export class Syncer {
    * 4. 让用户确认同步计划
    * 5. 执行同步
    * 
+   * @param ide1 第一个 IDE 名称
+   * @param ide2 第二个 IDE 名称
    * @param force 是否强制同步，跳过确认和冲突检测
    */
-  async syncBoth(force: boolean): Promise<void> {
-    const cursorFiles = await this.scanner.scan('cursor');
-    const windsurfFiles = await this.scanner.scan('windsurf');
+  async syncBidirectional(ide1: string, ide2: string, force: boolean): Promise<void> {
+    const ide1Adapter = getAdapter(ide1);
+    const ide2Adapter = getAdapter(ide2);
+    
+    const ide1Files = await this.scanner.scan(ide1);
+    const ide2Files = await this.scanner.scan(ide2);
     
     // 检查是否有文件
-    if (cursorFiles.length === 0 && windsurfFiles.length === 0) {
+    if (ide1Files.length === 0 && ide2Files.length === 0) {
       logger.warn('⚠️  两边都没有工作流文件');
       return;
     }
     
     logger.info('\n扫描结果:');
-    logger.info(`  Cursor: ${cursorFiles.length} 个工作流`);
-    logger.info(`  Windsurf: ${windsurfFiles.length} 个工作流\n`);
+    logger.info(`  ${ide1}: ${ide1Files.length} 个工作流`);
+    logger.info(`  ${ide2}: ${ide2Files.length} 个工作流\n`);
     
     // 查找需要同步的文件
-    const cursorOnly = cursorFiles.filter(cf => !windsurfFiles.some(wf => wf.name === cf.name));
-    const windsurfOnly = windsurfFiles.filter(wf => !cursorFiles.some(cf => cf.name === wf.name));
-    const conflicts = this.conflictResolver.findConflicts(cursorFiles, windsurfFiles);
+    const ide1Only = ide1Files.filter(f1 => !ide2Files.some(f2 => f2.name === f1.name));
+    const ide2Only = ide2Files.filter(f2 => !ide1Files.some(f1 => f1.name === f2.name));
+    const conflicts = this.conflictResolver.findConflicts(ide1Files, ide2Files);
     
     // 处理冲突
     const conflictChoices = new Map<string, 'from' | 'to' | 'skip'>();
     if (conflicts.length > 0 && !force) {
       logger.warn(`发现 ${conflicts.length} 个冲突文件`);
-      const choices = await this.conflictResolver.resolve(conflicts, 'cursor', 'windsurf');
+      const choices = await this.conflictResolver.resolve(conflicts, ide1, ide2);
       for (const [filename, choice] of choices) {
         conflictChoices.set(filename, choice);
       }
@@ -177,13 +186,13 @@ export class Syncer {
     
     // 显示同步计划
     logger.info('\n同步计划:');
-    if (windsurfOnly.length > 0) {
-      logger.info(`  Windsurf → Cursor: ${windsurfOnly.length} 个文件`);
-      windsurfOnly.forEach(f => logger.info(`    + ${f.name}`));
+    if (ide2Only.length > 0) {
+      logger.info(`  ${ide2} → ${ide1}: ${ide2Only.length} 个文件`);
+      ide2Only.forEach(f => logger.info(`    + ${f.name}`));
     }
-    if (cursorOnly.length > 0) {
-      logger.info(`  Cursor → Windsurf: ${cursorOnly.length} 个文件`);
-      cursorOnly.forEach(f => logger.info(`    + ${f.name}`));
+    if (ide1Only.length > 0) {
+      logger.info(`  ${ide1} → ${ide2}: ${ide1Only.length} 个文件`);
+      ide1Only.forEach(f => logger.info(`    + ${f.name}`));
     }
     if (conflicts.length > 0) {
       const resolvedConflicts = conflicts.filter(c => {
@@ -196,7 +205,7 @@ export class Syncer {
     }
     
     // 确认执行
-    if (!force && (windsurfOnly.length > 0 || cursorOnly.length > 0 || conflicts.length > 0)) {
+    if (!force && (ide2Only.length > 0 || ide1Only.length > 0 || conflicts.length > 0)) {
       const { confirm } = await inquirer.prompt([
         {
           type: 'confirm',
@@ -217,23 +226,23 @@ export class Syncer {
     // 执行同步
     let syncCount = 0;
     
-    // Windsurf → Cursor
-    for (const file of windsurfOnly) {
-      const converted = this.transformer.transform(file.content, file.name, 'windsurf', 'cursor');
-      const toPath = path.join(this.cwd, '.cursor/commands', file.name);
+    // ide2 → ide1
+    for (const file of ide2Only) {
+      const converted = this.transformer.transform(file.content, file.name, ide2, ide1);
+      const toPath = path.join(this.cwd, ide1Adapter.dirPath, file.name);
       await fs.ensureDir(path.dirname(toPath));
       await fs.writeFile(toPath, converted, 'utf-8');
-      logger.success(`✓ ${file.name} (Windsurf → Cursor)`);
+      logger.success(`✓ ${file.name} (${ide2} → ${ide1})`);
       syncCount++;
     }
     
-    // Cursor → Windsurf
-    for (const file of cursorOnly) {
-      const converted = this.transformer.transform(file.content, file.name, 'cursor', 'windsurf');
-      const toPath = path.join(this.cwd, '.windsurf/workflows', file.name);
+    // ide1 → ide2
+    for (const file of ide1Only) {
+      const converted = this.transformer.transform(file.content, file.name, ide1, ide2);
+      const toPath = path.join(this.cwd, ide2Adapter.dirPath, file.name);
       await fs.ensureDir(path.dirname(toPath));
       await fs.writeFile(toPath, converted, 'utf-8');
-      logger.success(`✓ ${file.name} (Cursor → Windsurf)`);
+      logger.success(`✓ ${file.name} (${ide1} → ${ide2})`);
       syncCount++;
     }
     
@@ -241,24 +250,24 @@ export class Syncer {
     for (const conflict of conflicts) {
       const choice = conflictChoices.get(conflict.filename);
       if (choice === 'from') {
-        // Cursor → Windsurf
-        const converted = this.transformer.transform(conflict.fromFile.content, conflict.filename, 'cursor', 'windsurf');
-        const toPath = path.join(this.cwd, '.windsurf/workflows', conflict.filename);
+        // ide1 → ide2
+        const converted = this.transformer.transform(conflict.fromFile.content, conflict.filename, ide1, ide2);
+        const toPath = path.join(this.cwd, ide2Adapter.dirPath, conflict.filename);
         await fs.writeFile(toPath, converted, 'utf-8');
-        logger.success(`✓ ${conflict.filename} (Cursor → Windsurf)`);
+        logger.success(`✓ ${conflict.filename} (${ide1} → ${ide2})`);
         syncCount++;
       } else if (choice === 'to') {
-        // Windsurf → Cursor
-        const converted = this.transformer.transform(conflict.toFile.content, conflict.filename, 'windsurf', 'cursor');
-        const toPath = path.join(this.cwd, '.cursor/commands', conflict.filename);
+        // ide2 → ide1
+        const converted = this.transformer.transform(conflict.toFile.content, conflict.filename, ide2, ide1);
+        const toPath = path.join(this.cwd, ide1Adapter.dirPath, conflict.filename);
         await fs.writeFile(toPath, converted, 'utf-8');
-        logger.success(`✓ ${conflict.filename} (Windsurf → Cursor)`);
+        logger.success(`✓ ${conflict.filename} (${ide2} → ${ide1})`);
         syncCount++;
       }
     }
     
-    const totalFiles = new Set([...cursorFiles.map(f => f.name), ...windsurfFiles.map(f => f.name)]).size;
-    logger.success(`\n✓ 完成！Cursor 和 Windsurf 现在都有 ${totalFiles} 个工作流\n`);
+    const totalFiles = new Set([...ide1Files.map(f => f.name), ...ide2Files.map(f => f.name)]).size;
+    logger.success(`\n✓ 完成！${ide1} 和 ${ide2} 现在都有 ${totalFiles} 个工作流\n`);
   }
 }
 

@@ -28,3 +28,10 @@ export function getAdapter(name: string): IDEAdapter {
 export function getAllAdapters(): IDEAdapter[] {
   return Object.values(ADAPTERS);
 }
+
+/**
+ * 获取所有 IDE 名称
+ */
+export function getAllIDENames(): string[] {
+  return Object.keys(ADAPTERS);
+}

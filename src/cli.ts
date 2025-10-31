@@ -22,9 +22,9 @@ program
 program
   .command('sync')
   .description('同步工作流')
-  .option('--from <ide>', '源 IDE (cursor|windsurf)')
-  .option('--to <ide>', '目标 IDE (cursor|windsurf)')
-  .option('--both', '双向同步')
+  .requiredOption('--from <ide>', '源 IDE 名称')
+  .requiredOption('--to <ide>', '目标 IDE 名称')
+  .option('--both', '双向同步（默认为单向）')
   .option('--force', '强制覆盖，不提示冲突')
   .action(syncCommand);
 
