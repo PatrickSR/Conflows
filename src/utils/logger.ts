@@ -1,8 +1,6 @@
 import chalk from 'chalk';
 
-/**
- * 日志工具
- */
+/** 彩色日志工具 */
 export const logger = {
   success: (msg: string) => console.log(chalk.green(msg)),
   error: (msg: string) => console.log(chalk.red(msg)),

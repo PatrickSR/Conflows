@@ -7,26 +7,14 @@ import { fs } from '../utils/fs.js';
 import { logger } from '../utils/logger.js';
 import type { SyncOptions } from '../types/index.js';
 
-/**
- * 文件同步器
- * 
- * 负责执行工作流文件的同步操作
- * 支持单向同步和双向同步两种模式
- */
+/** 文件同步器 */
 export class Syncer {
   private scanner = new Scanner();
   private transformer = new Transformer();
   private conflictResolver = new ConflictResolver();
   private cwd = process.cwd();
   
-  /**
-   * 执行同步
-   * 
-   * 根据选项执行单向或双向同步
-   * 
-   * @param options 同步选项
-   * @throws 如果选项不完整则抛出异常
-   */
+  /** 执行同步 */
   async sync(options: SyncOptions): Promise<void> {
     if (!options.from || !options.to) {
       throw new Error('请指定 --from 和 --to');
@@ -41,21 +29,7 @@ export class Syncer {
     }
   }
   
-  /**
-   * 单向同步
-   * 
-   * 将文件从源 IDE 同步到目标 IDE
-   * 
-   * 流程：
-   * 1. 检查源目录是否存在
-   * 2. 扫描源文件
-   * 3. 检测冲突（如果不是 force 模式）
-   * 4. 转换格式并写入目标目录
-   * 
-   * @param from 源 IDE 名称
-   * @param to 目标 IDE 名称
-   * @param force 是否强制覆盖，不提示冲突
-   */
+  /** 单向同步：from → to */
   async syncOneWay(from: string, to: string, force: boolean): Promise<void> {
     const fromAdapter = getAdapter(from);
     const toAdapter = getAdapter(to);
@@ -136,22 +110,7 @@ export class Syncer {
     logger.success(`\n✓ 已同步 ${syncCount} 个工作流到 ${to}\n`);
   }
   
-  /**
-   * 双向同步
-   * 
-   * 将两个 IDE 的工作流文件进行双向同步
-   * 
-   * 流程：
-   * 1. 扫描两个 IDE 的文件
-   * 2. 找出只在一个 IDE 中存在的文件
-   * 3. 检测冲突文件
-   * 4. 让用户确认同步计划
-   * 5. 执行同步
-   * 
-   * @param ide1 第一个 IDE 名称
-   * @param ide2 第二个 IDE 名称
-   * @param force 是否强制同步，跳过确认和冲突检测
-   */
+  /** 双向同步：ide1 ⇄ ide2 */
   async syncBidirectional(ide1: string, ide2: string, force: boolean): Promise<void> {
     const ide1Adapter = getAdapter(ide1);
     const ide2Adapter = getAdapter(ide2);

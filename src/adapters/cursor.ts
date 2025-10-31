@@ -2,33 +2,18 @@ import matter from 'gray-matter';
 import type { IDEAdapter, WorkflowIR } from '../types/index.js';
 
 /**
- * Cursor 适配器
- * 
- * Cursor 使用纯 markdown 格式（无 frontmatter）
- * 
- * 格式示例：
- * ```markdown
- * # 工作流标题
- * 
- * 工作流内容...
- * ```
- * 
- * 注意：
- * - Cursor 文件可能包含 frontmatter，也可能没有
- * - 转换到 Windsurf 时需要智能提取 description
+ * 纯 markdown 格式适配器
+ * 输出不带 frontmatter 的纯 markdown
  */
 export class CursorAdapter implements IDEAdapter {
   name = 'cursor';
   dirPath = '.cursor/commands';
   
   /**
-   * 解析 Cursor 格式到中间格式
-   * @param content 文件内容
-   * @param filename 文件名
-   * @returns 标准化的工作流中间格式
+   * 解析为中间格式
    */
   parse(content: string, filename: string): WorkflowIR {
-    // Cursor 可能有 frontmatter 也可能没有
+    // 解析 frontmatter（如果存在）
     const parsed = matter(content);
     const data = parsed.data as { description?: string };
     
@@ -44,26 +29,14 @@ export class CursorAdapter implements IDEAdapter {
   }
   
   /**
-   * 序列化中间格式到 Cursor 格式
-   * @param workflow 工作流中间格式
-   * @returns Cursor 格式的纯 markdown 内容（无 frontmatter）
+   * 序列化为纯 markdown（无 frontmatter）
    */
   serialize(workflow: WorkflowIR): string {
-    // Cursor 输出纯 markdown（不带 frontmatter）
     return workflow.content;
   }
   
   /**
-   * 从内容或文件名提取 description
-   * 
-   * 提取优先级：
-   * 1. 第一行 markdown 标题（# 标题）
-   * 2. 第一段文本（前 50 字符）
-   * 3. 文件名（去掉扩展名，替换分隔符）
-   * 
-   * @param content 文件内容
-   * @param filename 文件名
-   * @returns 提取的描述文本
+   * 提取描述：标题 > 首段 > 文件名
    */
   private extractDescription(content: string, filename: string): string {
     // 1. 尝试从第一行提取（如果是 markdown 标题）

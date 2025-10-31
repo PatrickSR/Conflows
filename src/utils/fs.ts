@@ -1,8 +1,6 @@
 import fse from 'fs-extra';
 
-/**
- * 文件系统工具
- */
+/** 文件系统工具 */
 export const fs = {
   exists: fse.pathExists,
   readdir: fse.readdir,

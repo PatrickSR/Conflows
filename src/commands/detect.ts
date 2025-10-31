@@ -1,11 +1,7 @@
 import { Scanner } from '../core/scanner.js';
 import { logger } from '../utils/logger.js';
 
-/**
- * detect 命令：检测项目中的工作流配置
- * 
- * 扫描当前项目，显示 Cursor 和 Windsurf 的工作流文件
- */
+/** 检测项目工作流配置 */
 export async function detectCommand(): Promise<void> {
   const scanner = new Scanner();
   

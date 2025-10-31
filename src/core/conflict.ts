@@ -3,26 +3,9 @@ import matter from 'gray-matter';
 import type { WorkflowFile, Conflict } from '../types/index.js';
 import { logger } from '../utils/logger.js';
 
-/**
- * 冲突解决器
- * 
- * 负责检测和解决工作流文件冲突
- * 
- * 冲突定义：
- * - 同名文件在两个 IDE 中都存在
- * - 文件内容不同（忽略 frontmatter 差异）
- */
+/** 冲突解决器 */
 export class ConflictResolver {
-  /**
-   * 查找冲突文件
-   * 
-   * 检查两个文件列表，找出同名但内容不同的文件
-   * 注意：比较时会忽略 frontmatter 差异，只比较正文内容
-   * 
-   * @param fromFiles 源文件列表
-   * @param toFiles 目标文件列表
-   * @returns 冲突文件列表
-   */
+  /** 查找同名但内容不同的文件（忽略 frontmatter） */
   findConflicts(fromFiles: WorkflowFile[], toFiles: WorkflowFile[]): Conflict[] {
     const conflicts: Conflict[] = [];
     
@@ -47,16 +30,7 @@ export class ConflictResolver {
     return conflicts;
   }
   
-  /**
-   * 解决冲突（交互式）
-   * 
-   * 对每个冲突文件，显示两个版本的元数据，让用户选择保留哪个
-   * 
-   * @param conflicts 冲突文件列表
-   * @param fromIde 源 IDE 名称（用于显示）
-   * @param toIde 目标 IDE 名称（用于显示）
-   * @returns Map，key 为文件名，value 为用户选择（'from' | 'to' | 'skip'）
-   */
+  /** 交互式解决冲突，返回用户选择 */
   async resolve(conflicts: Conflict[], fromIde: string, toIde: string): Promise<Map<string, 'from' | 'to' | 'skip'>> {
     const choices = new Map<string, 'from' | 'to' | 'skip'>();
     
@@ -90,14 +64,7 @@ export class ConflictResolver {
     return choices;
   }
   
-  /**
-   * 提取正文内容（去除 frontmatter）
-   * 
-   * 用于比较文件内容时忽略 frontmatter 差异
-   * 
-   * @param content 原始文件内容
-   * @returns 去除 frontmatter 后的正文
-   */
+  /** 提取正文（去除 frontmatter） */
   private extractBody(content: string): string {
     const parsed = matter(content);
     return parsed.content.trim();

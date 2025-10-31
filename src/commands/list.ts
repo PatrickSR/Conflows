@@ -1,11 +1,7 @@
 import { Scanner } from '../core/scanner.js';
 import { logger } from '../utils/logger.js';
 
-/**
- * list 命令：列出所有工作流
- * 
- * 显示当前项目中 Cursor 和 Windsurf 的所有工作流文件
- */
+/** 列出所有工作流 */
 export async function listCommand(): Promise<void> {
   const scanner = new Scanner();
   
