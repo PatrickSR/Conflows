@@ -28,7 +28,6 @@ describe('CentralManager', () => {
       expect(await fs.exists(testDir)).toBe(true);
       expect(await fs.exists(manager.getWorkflowsPath())).toBe(true);
       expect(await fs.exists(path.join(testDir, 'config.json'))).toBe(true);
-      expect(await fs.exists(path.join(testDir, 'projects.json'))).toBe(true);
     });
 
     test('应该创建默认配置', async () => {

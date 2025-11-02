@@ -1,14 +1,12 @@
-import { ConfigManager } from '../core/config-manager.js';
+import { CentralManager } from '../core/central-manager.js';
 import { logger } from '../utils/logger.js';
 
 /** 列出工作流命令 */
 export async function listCommand(options?: {
   tag?: string;
-  projects?: boolean;
 }): Promise<void> {
   try {
-    const configManager = new ConfigManager();
-    const centralManager = configManager.getCentralManager();
+    const centralManager = new CentralManager();
 
     // 检查中心目录是否已初始化
     if (!await centralManager.isInitialized()) {

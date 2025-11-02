@@ -49,10 +49,6 @@ export class CentralManager {
     };
 
     await fs.writeFile(this.configPath, JSON.stringify(defaultConfig, null, 2), 'utf-8');
-
-    // 创建空的 projects.json
-    const projectsPath = path.join(this.centralPath, 'projects.json');
-    await fs.writeFile(projectsPath, JSON.stringify({ projects: {} }, null, 2), 'utf-8');
   }
 
   /** 读取中心配置 */
