@@ -9,4 +9,5 @@ export const fs = {
   stat: fse.stat,
   ensureDir: fse.ensureDir,
   copy: fse.copy,
+  remove: fse.remove,
 };
