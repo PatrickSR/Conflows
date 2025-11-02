@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "bun run src/cli.ts",
     "build": "mkdir -p dist && bun build --target=node --sourcemap src/cli.ts --outdir=dist && chmod +x dist/cli.js",
-    "test": "vitest"
+    "test": "bun test"
   },
   "dependencies": {
     "commander": "^12.1.0",

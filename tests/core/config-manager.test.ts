@@ -1,6 +1,6 @@
-import { describe, test, expect, beforeEach, afterEach } from 'vitest';
-import { ConfigManager } from './config-manager.js';
-import { fs } from '../utils/fs.js';
+import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
+import { ConfigManager } from '../../src/core/config-manager.js';
+import { fs } from '../../src/utils/fs.js';
 import path from 'path';
 import os from 'os';
 
