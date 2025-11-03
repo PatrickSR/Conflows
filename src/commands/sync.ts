@@ -5,7 +5,7 @@ import { IDEDetector } from '../utils/ide-detector.js';
 import type { SyncOptions, ResolvedConfig } from '../types/index.js';
 
 /** Default IDE list */
-const DEFAULT_IDES = ['cursor', 'windsurf'];
+const DEFAULT_IDES = ['cursor', 'windsurf', 'vscode'];
 
 /** Sync workflow command - distribute from central directory to current project */
 export async function syncCommand(options: SyncOptions): Promise<void> {
@@ -19,37 +19,60 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
       logger.info('Please run: conflows init');
       process.exit(1);
     }
+    
+    // Check for legacy workflows directory
+    if (await centralManager.hasLegacyWorkflows()) {
+      logger.warn('\n⚠️  Legacy workflows directory detected!');
+      logger.warn(`Found: ${centralManager.getCentralPath()}/workflows/`);
+      logger.warn('Please manually move files to:');
+      logger.warn(`  Commands: ${centralManager.getCommandsPath()}`);
+      logger.warn(`  Rules: ${centralManager.getRulesPath()}`);
+      logger.warn('Note: Consider converting files to .mdc format with namespace config\n');
+    }
 
     // Use current directory
     const projectDir = process.cwd();
-
-    // Scan all workflows (full)
-    const allWorkflows = await centralManager.scanWorkflows();
-    let workflows = allWorkflows.map(w => w.name);
     
-    if (workflows.length === 0) {
-      logger.warn('⚠️  No workflow files in central directory');
-      logger.info(`Please create .md files in ${centralManager.getWorkflowsPath()}`);
+    // Determine sync type
+    const syncType = options.type || 'all';
+
+    // Scan commands and rules based on sync type
+    let commands: string[] = [];
+    let rules: string[] = [];
+    
+    if (syncType === 'commands' || syncType === 'all') {
+      const allCommands = await centralManager.scanCommands();
+      commands = allCommands.map(w => w.name);
+    }
+    
+    if (syncType === 'rules' || syncType === 'all') {
+      const allRules = await centralManager.scanRules();
+      rules = allRules.map(r => r.name);
+    }
+    
+    if (commands.length === 0 && rules.length === 0) {
+      logger.warn('⚠️  No files found in central directory');
+      logger.info(`Commands: ${centralManager.getCommandsPath()}`);
+      logger.info(`Rules: ${centralManager.getRulesPath()}`);
       return;
     }
 
     // Handle include
     if (options.include && options.include.length > 0) {
-      workflows.push(...options.include);
+      if (syncType === 'commands' || syncType === 'all') {
+        commands.push(...options.include);
+      }
     }
 
     // Handle exclude
     if (options.exclude && options.exclude.length > 0) {
-      workflows = workflows.filter(w => !options.exclude?.includes(w));
+      commands = commands.filter(w => !options.exclude?.includes(w));
+      rules = rules.filter(r => !options.exclude?.includes(r));
     }
 
     // Deduplicate
-    workflows = [...new Set(workflows)];
-
-    if (workflows.length === 0) {
-      logger.warn('No workflows to sync');
-      return;
-    }
+    commands = [...new Set(commands)];
+    rules = [...new Set(rules)];
 
     // Determine target IDEs
     let targetIDEs: string[] = options.ides || DEFAULT_IDES;
@@ -77,13 +100,15 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
     // Build final config
     const resolvedConfig: ResolvedConfig = {
       ides: targetIDEs,
-      workflows,
+      workflows: commands, // for backward compatibility
+      commands,
+      rules,
       include: options.include || [],
       exclude: options.exclude || [],
     };
 
     // Execute sync
-    await distributor.distribute(projectDir, resolvedConfig, options.dryRun || false);
+    await distributor.distribute(projectDir, resolvedConfig, syncType, options.dryRun || false);
   } catch (error) {
     if (error instanceof Error) {
       logger.error(`\n❌ Error: ${error.message}\n`);

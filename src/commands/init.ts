@@ -18,12 +18,21 @@ export async function initCommand(): Promise<void> {
     await manager.init();
 
     logger.success('✅ Initialization complete!\n');
-    logger.info(`Workflows directory: ${manager.getWorkflowsPath()}`);
+    logger.info(`Central directory: ${manager.getCentralPath()}`);
+    logger.info(`  Commands: ${manager.getCommandsPath()}`);
+    logger.info(`  Rules: ${manager.getRulesPath()}`);
     logger.info('');
     logger.info('Next steps:');
-    logger.info(`  1. Create .md files in ${manager.getWorkflowsPath()}`);
-    logger.info('  2. cd to your project directory');
-    logger.info('  3. Run conflows sync');
+    logger.info(`  1. Create .mdc files in ${manager.getCommandsPath()} or ${manager.getRulesPath()}`);
+    logger.info('  2. Example format:');
+    logger.info('     ---');
+    logger.info('     description: "Your description"');
+    logger.info('     vscode:');
+    logger.info('       mode: agent');
+    logger.info('     ---');
+    logger.info('     # Your content here');
+    logger.info('  3. cd to your project directory');
+    logger.info('  4. Run: conflows sync');
     logger.info('');
   } catch (error) {
     if (error instanceof Error) {

@@ -1,6 +1,6 @@
 {
   "name": "conflows",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Centralized IDE workflow manager - Context + Workflow",
   "type": "module",
   "author": "Patrick",
@@ -14,9 +14,11 @@
     "ide",
     "cursor",
     "windsurf",
+    "vscode",
     "cli",
     "sync",
-    "context"
+    "context",
+    "rules"
   ],
   "files": [
     "dist",
