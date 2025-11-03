@@ -1,7 +1,7 @@
 {
   "name": "conflow",
-  "version": "0.0.3",
-  "description": "同步 Cursor 和 Windsurf 工作流的 CLI 工具",
+  "version": "0.0.5",
+  "description": "Centralized IDE workflow manager - Context + Workflow",
   "type": "module",
   "author": "Patrick",
   "license": "MIT",
