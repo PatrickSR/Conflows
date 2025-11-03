@@ -29,18 +29,11 @@ export interface IDEAdapter {
 
 /** 同步选项 */
 export interface SyncOptions {
-  from?: string;
-  to?: string;
-  both?: boolean;
-  force?: boolean;
-  // 新增：中心目录下发相关选项
   tags?: string[];
   ides?: string[];
   include?: string[];
   exclude?: string[];
-  save?: boolean;
   dryRun?: boolean;
-  all?: boolean;
 }
 
 /** 冲突信息 */
@@ -50,44 +43,8 @@ export interface Conflict {
   toFile: WorkflowFile;
 }
 
-/** 中心配置 */
-export interface CentralConfig {
-  version: string;
-  defaultIDEs: string[];
-  tags: Record<string, TagConfig>;
-  workflowMeta: Record<string, WorkflowMeta>;
-}
-
-/** Tag 配置 */
-export interface TagConfig {
-  description: string;
-  workflows: string[];
-}
-
-/** Workflow 元数据 */
-export interface WorkflowMeta {
-  description: string;
-  executionMode?: 'safe' | 'turbo' | 'auto';
-}
-
-/** 项目映射配置 */
-export interface ProjectsMapping {
-  projects: Record<string, ProjectConfig>;
-}
-
-/** 项目配置 */
-export interface ProjectConfig {
-  name?: string;
-  tags: string[];
-  ides?: string[];
-  include?: string[];
-  exclude?: string[];
-  lastSync?: string;
-}
-
 /** 解析后的配置 */
 export interface ResolvedConfig {
-  tags: string[];
   ides: string[];
   workflows: string[];
   include: string[];

@@ -1,17 +1,16 @@
-import { ConfigManager } from '../core/config-manager.js';
+import { CentralManager } from '../core/central-manager.js';
 import { Distributor } from '../core/distributor.js';
 import { logger } from '../utils/logger.js';
-import type { SyncOptions } from '../types/index.js';
+import type { SyncOptions, ResolvedConfig } from '../types/index.js';
 
-/** 同步工作流命令 - 从中心目录下发到项目 */
-export async function syncCommand(
-  projectDir: string | undefined,
-  options: SyncOptions
-): Promise<void> {
+/** 默认的 IDE 列表 */
+const DEFAULT_IDES = ['cursor', 'windsurf'];
+
+/** 同步工作流命令 - 从中心目录下发到当前项目 */
+export async function syncCommand(options: SyncOptions): Promise<void> {
   try {
-    const configManager = new ConfigManager();
+    const centralManager = new CentralManager();
     const distributor = new Distributor();
-    const centralManager = configManager.getCentralManager();
 
     // 检查中心目录是否已初始化
     if (!await centralManager.isInitialized()) {
@@ -20,45 +19,47 @@ export async function syncCommand(
       process.exit(1);
     }
 
-    // 如果指定了 --all，同步所有已配置的项目
-    if (options.all) {
-      await syncAllProjects(configManager, distributor, options);
+    // 使用当前目录
+    const projectDir = process.cwd();
+
+    // 扫描所有 workflows（全量）
+    const allWorkflows = await centralManager.scanWorkflows();
+    let workflows = allWorkflows.map(w => w.name);
+    
+    if (workflows.length === 0) {
+      logger.warn('⚠️  中心目录没有 workflow 文件');
+      logger.info(`请在 ${centralManager.getWorkflowsPath()} 中创建 .md 文件`);
       return;
     }
 
-    // 必须指定项目目录
-    if (!projectDir) {
-      logger.error('❌ 请指定项目目录');
-      logger.info('用法: sync-workflow sync <project-dir>');
-      logger.info('或者: sync-workflow sync --all');
-      process.exit(1);
+    // 处理 include
+    if (options.include && options.include.length > 0) {
+      workflows.push(...options.include);
     }
 
-    // 解析配置
-    const resolvedConfig = await configManager.resolveConfig(projectDir, options);
-
-    // 检查是否有配置
-    if (resolvedConfig.tags.length === 0 && resolvedConfig.include.length === 0) {
-      logger.error('❌ 未指定 tags 或 include');
-      logger.info('用法: sync-workflow sync <project-dir> --tags <tags>');
-      logger.info('示例: sync-workflow sync ~/project --tags common,frontend');
-      process.exit(1);
+    // 处理 exclude
+    if (options.exclude && options.exclude.length > 0) {
+      workflows = workflows.filter(w => !options.exclude?.includes(w));
     }
+
+    // 去重
+    workflows = [...new Set(workflows)];
+
+    if (workflows.length === 0) {
+      logger.warn('没有需要同步的 workflow');
+      return;
+    }
+
+    // 构建最终配置（使用硬编码默认值）
+    const resolvedConfig: ResolvedConfig = {
+      ides: options.ides || DEFAULT_IDES,
+      workflows,
+      include: options.include || [],
+      exclude: options.exclude || [],
+    };
 
     // 执行同步
     await distributor.distribute(projectDir, resolvedConfig, options.dryRun || false);
-
-    // 如果指定了 --save，保存配置
-    if (options.save && !options.dryRun) {
-      await configManager.saveProjectConfig(projectDir, {
-        tags: resolvedConfig.tags,
-        ides: resolvedConfig.ides,
-        include: resolvedConfig.include,
-        exclude: resolvedConfig.exclude,
-      });
-      logger.info(`\n💾 配置已保存，下次可以直接运行:`);
-      logger.info(`   sync-workflow sync ${projectDir}`);
-    }
   } catch (error) {
     if (error instanceof Error) {
       logger.error(`\n❌ 错误: ${error.message}\n`);
@@ -67,37 +68,4 @@ export async function syncCommand(
     }
     process.exit(1);
   }
-}
-
-/** 同步所有已配置的项目 */
-async function syncAllProjects(
-  configManager: ConfigManager,
-  distributor: Distributor,
-  options: SyncOptions
-): Promise<void> {
-  const projects = await configManager.getProjects();
-  const projectPaths = Object.keys(projects.projects);
-
-  if (projectPaths.length === 0) {
-    logger.warn('没有已配置的项目');
-    logger.info('请先为项目配置 tags:');
-    logger.info('  sync-workflow sync <project-dir> --tags <tags> --save');
-    return;
-  }
-
-  logger.info(`\n找到 ${projectPaths.length} 个已配置的项目\n`);
-
-  for (const projectPath of projectPaths) {
-    const config = await configManager.getProjectConfig(projectPath);
-    if (!config) continue;
-
-    logger.info(`\n${'='.repeat(60)}`);
-    logger.info(`同步: ${projectPath}`);
-    logger.info('='.repeat(60));
-
-    const resolvedConfig = await configManager.resolveConfig(projectPath, options);
-    await distributor.distribute(projectPath, resolvedConfig, options.dryRun || false);
-  }
-
-  logger.success(`\n✅ 全部完成! 已同步 ${projectPaths.length} 个项目`);
 }

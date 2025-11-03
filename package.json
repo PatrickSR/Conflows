@@ -1,6 +1,6 @@
 {
   "name": "sync-workflow",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "同步 Cursor 和 Windsurf 工作流的 CLI 工具",
   "type": "module",
   "bin": {
