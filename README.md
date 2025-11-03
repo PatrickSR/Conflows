@@ -1,250 +1,187 @@
 # Conflow
 
-集中管理和分发 IDE workflow 的 CLI 工具。
+**Con**text + Work**flow** - A centralized IDE workflow manager.
 
-## 核心理念
+Conflow helps you manage and distribute AI-powered workflows across multiple IDEs (Cursor, Windsurf, etc.) from a single source of truth.
 
-- **集中管理**：所有 workflow 在 `~/.conflow/` 统一管理
-- **零污染**：项目目录不存放配置文件
-- **灵活配置**：通过 tags 灵活组合 workflows
-- **批量操作**：一次更新，多个项目同步
-- **IDE 无关**：通过适配器支持多种 IDE
+## Core Features
 
-## 快速开始
+- **Centralized Management**: All workflows stored in `~/.conflow/` 
+- **Zero Pollution**: No config files cluttering your project directories
+- **IDE Agnostic**: Seamless conversion between IDE formats via adapters
+- **Simple Distribution**: One command to sync workflows to your projects
 
-### 1. 初始化中心目录
+## Quick Start
+
+### 1. Initialize Central Directory
 
 ```bash
 conflow init
 ```
 
-这会创建 `~/.conflow/` 目录结构：
-- `workflows/` - 存放所有 workflow markdown 文件
-- `config.json` - 全局配置（tags 定义）
-- `projects.json` - 项目映射配置
+This creates the `~/.conflow/` directory structure:
+- `workflows/` - Store all your workflow markdown files here
 
-### 2. 创建 Workflow
+### 2. Create Workflows
 
-在 `~/.conflow/workflows/` 中创建 markdown 文件：
+Create markdown files in `~/.conflow/workflows/`:
 
 ```bash
 cd ~/.conflow/workflows
 echo "# Code Review\n\nReview code changes..." > code-review.md
 ```
 
-### 3. 配置 Tags
-
-编辑 `~/.conflow/config.json`，定义 tags：
-
-```json
-{
-  "tags": {
-    "common": {
-      "description": "通用工作流",
-      "workflows": [
-        "code-review.md",
-        "refactor-code.md"
-      ]
-    },
-    "frontend": {
-      "description": "前端开发",
-      "workflows": [
-        "component-generator.md"
-      ]
-    }
-  }
-}
-```
-
-### 4. 下发到项目
+### 3. Distribute to Projects
 
 ```bash
-# 临时指定 tags
-conflow sync ~/project-a --tags common,frontend
+# Navigate to your project directory
+cd ~/my-project
 
-# 保存配置，下次直接使用
-conflow sync ~/project-a --tags common,frontend --save
+# Sync all workflows
+conflow sync
 
-# 后续直接同步
-conflow sync ~/project-a
+# Preview before syncing
+conflow sync --dry-run
+
+# Sync to specific IDEs only
+conflow sync --ides cursor
 ```
 
-## 命令说明
+## Commands
 
-### `init` - 初始化中心目录
+### `init` - Initialize Central Directory
 
 ```bash
 conflow init
 ```
 
-### `sync` - 下发 workflows 到项目
+Creates the central directory at `~/.conflow/`.
+
+### `sync` - Distribute Workflows
 
 ```bash
-conflow sync <project-dir> [options]
-
-选项:
-  --tags <tags>         指定 tags（逗号分隔）
-  --ides <ides>         指定 IDE（逗号分隔，默认: cursor,windsurf）
-  --include <files>     额外包含的文件
-  --exclude <files>     排除的文件
-  --save               保存配置
-  --dry-run            预览模式
-  --all                同步所有已配置的项目
+conflow sync [options]
 ```
 
-示例：
+**Options:**
+- `--ides <ides>` - Specify target IDEs (comma-separated, default: cursor,windsurf)
+- `--include <files>` - Additional files to include (comma-separated)
+- `--exclude <files>` - Files to exclude (comma-separated)
+- `--dry-run` - Preview without writing
+
+**Examples:**
 
 ```bash
-# 预览将要同步的内容
-conflow sync ~/project --tags common --dry-run
+# Preview sync
+conflow sync --dry-run
 
-# 指定并保存配置
-conflow sync ~/project --tags common,frontend --save
+# Sync to Cursor only
+conflow sync --ides cursor
 
-# 批量同步所有项目
-conflow sync --all
+# Exclude specific files
+conflow sync --exclude old-workflow.md
 ```
 
-### `projects` - 管理项目配置
+### `list` - List All Workflows
 
 ```bash
-# 列出所有项目
-conflow projects list
-
-# 查看项目配置
-conflow projects show <project-dir>
-
-# 设置项目配置
-conflow projects set <project-dir> --tags <tags>
-
-# 删除项目配置
-conflow projects remove <project-dir>
-```
-
-### `list` - 列出 workflows
-
-```bash
-# 列出所有 workflows
 conflow list
-
-# 按 tag 筛选
-conflow list --tag common
 ```
 
-### `tags` - 管理 tags
+Shows all workflows in the central directory with their sizes and modification dates.
+
+## Usage Scenarios
+
+### Scenario 1: First-Time Setup
 
 ```bash
-# 列出所有 tags
-conflow tags list
-
-# 查看 tag 详情
-conflow tags show <tag-name>
-```
-
-## 使用场景
-
-### 场景 1: 首次设置
-
-```bash
-# 1. 初始化
+# 1. Initialize
 conflow init
 
-# 2. 创建 workflows
+# 2. Create workflows
 cd ~/.conflow/workflows
 vim code-review.md
+vim refactor-helper.md
 
-# 3. 编辑 config.json 定义 tags
-vim ~/.conflow/config.json
+# 3. Navigate to your project
+cd ~/my-project
 
-# 4. 下发到项目
-conflow sync ~/project-a --tags common --save
+# 4. Sync workflows
+conflow sync
 ```
 
-### 场景 2: 更新 Workflow
+### Scenario 2: Update Workflows
 
 ```bash
-# 1. 编辑 workflow
+# 1. Edit a workflow
 vim ~/.conflow/workflows/code-review.md
 
-# 2. 批量同步到所有项目
-conflow sync --all
+# 2. Sync to all your projects
+cd ~/project-a && conflow sync
+cd ~/project-b && conflow sync
 ```
 
-### 场景 3: 新项目快速配置
+### Scenario 3: New Project Setup
 
 ```bash
-# 方式 A: 临时指定
-conflow sync ~/new-project --tags common,frontend
-
-# 方式 B: 保存配置
-conflow sync ~/new-project --tags common,frontend --save
+# Quick setup for a new project
+cd ~/new-project
+conflow sync
 ```
 
-## 配置文件
+## How It Works
 
-### 全局配置 (`~/.conflow/config.json`)
+Conflow uses an **intermediate representation (IR)** to convert workflows between different IDE formats:
 
-```json
-{
-  "version": "1.0.0",
-  "defaultIDEs": ["cursor", "windsurf"],
-  "tags": {
-    "common": {
-      "description": "通用工作流",
-      "workflows": ["code-review.md", "refactor-code.md"]
-    }
-  },
-  "workflowMeta": {
-    "code-review.md": {
-      "description": "代码审查工作流",
-      "executionMode": "safe"
-    }
-  }
-}
+```
+Central Storage (Cursor format) → IR → Target IDE Format
 ```
 
-### 项目映射 (`~/.conflow/projects.json`)
+**Supported IDEs:**
+- **Cursor**: Plain markdown format (`.cursor/commands/`)
+- **Windsurf**: Markdown with YAML frontmatter (`.windsurf/workflows/`)
 
-```json
-{
-  "projects": {
-    "/Users/patrick/project-a": {
-      "tags": ["common", "frontend"],
-      "ides": ["cursor", "windsurf"],
-      "lastSync": "2024-11-02T09:00:00Z"
-    }
-  }
-}
-```
-
-## 开发
+## Development
 
 ```bash
-# 安装依赖
+# Install dependencies
 bun install
 
-# 开发模式
+# Development mode
 bun run dev
 
-# 构建
+# Build
 bun run build
 
-# 测试
+# Test
 bun test
 ```
 
-## 版本历史
+## Version History
 
-### v0.0.2 (Current)
+### v0.0.5 (Current)
 
-- 🎉 **集中管理**：实现中心目录管理 workflows
-- ✨ 新增 `init` 命令：初始化中心目录
-- ✨ 重构 `sync` 命令：从中心目录下发到项目
-- ✨ 新增 `projects` 命令组：管理项目配置
-- ✨ 新增 `tags` 命令组：管理 tags
-- ✨ 重构 `list` 命令：列出中心目录的 workflows
-- 🧪 添加完整的单元测试（21 个测试用例）
+- 🌍 **Internationalization**: Full English localization
+- 🔄 **Renamed**: `sync-workflow` → `conflow` (Context + Workflow)
+- 📦 **NPM Ready**: Published to npm registry
+- 📝 **Documentation**: Complete English documentation
+
+### v0.0.2
+
+- 🎉 **Centralized Management**: Implemented central directory for workflows
+- ✨ Added `init` command: Initialize central directory
+- ✨ Refactored `sync` command: Distribute from central to projects
+- ✨ Added `list` command: List all workflows
+- 🧪 Added comprehensive unit tests (21 test cases)
 
 ### v0.0.1
 
-- 初始版本：支持 Cursor 和 Windsurf 之间的双向同步
+- Initial version: Bidirectional sync between Cursor and Windsurf
+
+## License
+
+MIT
+
+## Contributing
+
+Contributions welcome! Please feel free to submit a Pull Request.
