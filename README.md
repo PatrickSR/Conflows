@@ -6,14 +6,15 @@
 
 **Con**text + Work**flow**s - A centralized IDE workflow manager.
 
-Conflows helps you manage and distribute AI-powered workflows across multiple IDEs (Cursor, Windsurf, etc.) from a single source of truth.
+Conflows helps you manage and distribute AI-powered commands and rules across multiple IDEs (Cursor, Windsurf, VSCode) from a single source of truth.
 
 ## Core Features
 
-- **Centralized Management**: All workflows stored in `~/.conflows/` 
+- **Centralized Management**: All commands and rules stored in `~/.conflows/` 
 - **Zero Pollution**: No config files cluttering your project directories
 - **IDE Agnostic**: Seamless conversion between IDE formats via adapters
-- **Simple Distribution**: One command to sync workflows to your projects
+- **Multi-Type Support**: Sync both commands (workflows) and rules
+- **Simple Distribution**: One command to sync to your projects
 
 ## Quick Start
 
@@ -24,15 +25,48 @@ conflows init
 ```
 
 This creates the `~/.conflows/` directory structure:
-- `workflows/` - Store all your workflow markdown files here
+- `commands/` - Store your command files here (.mdc format)
+- `rules/` - Store your rule files here (.mdc format)
 
-### 2. Create Workflows
+### 2. Create Commands and Rules
 
-Create markdown files in `~/.conflows/workflows/`:
+Create `.mdc` files in `~/.conflows/commands/` and `~/.conflows/rules/`:
 
-```bash
-cd ~/.conflows/workflows
-echo "# Code Review\n\nReview code changes..." > code-review.md
+**Command Example** (`~/.conflows/commands/code-review.mdc`):
+```markdown
+---
+description: "AI code review assistant"
+
+vscode:
+  mode: agent
+  tools: ["edit", "search"]
+
+windsurf:
+  auto_execution_mode: 3
+---
+
+# Code Review
+
+Review the code changes carefully...
+```
+
+**Rule Example** (`~/.conflows/rules/typescript-style.mdc`):
+```markdown
+---
+description: "TypeScript coding guidelines"
+
+cursor:
+  alwaysApply: true
+
+windsurf:
+  mode: always
+
+vscode:
+  applyTo: "**/*.{ts,tsx}"
+---
+
+Use TypeScript for all new files.
+Prefer const over let.
 ```
 
 ### 3. Distribute to Projects
@@ -41,14 +75,20 @@ echo "# Code Review\n\nReview code changes..." > code-review.md
 # Navigate to your project directory
 cd ~/my-project
 
-# Sync all workflows
+# Sync everything (commands + rules)
 conflows sync
+
+# Sync only commands
+conflows sync --type commands
+
+# Sync only rules
+conflows sync --type rules
 
 # Preview before syncing
 conflows sync --dry-run
 
-# Sync to specific IDEs only
-conflows sync --ides cursor
+# Sync to specific IDEs
+conflows sync --ides cursor,vscode
 ```
 
 ## Commands
@@ -61,14 +101,15 @@ conflows init
 
 Creates the central directory at `~/.conflows/`.
 
-### `sync` - Distribute Workflows
+### `sync` - Distribute Commands and Rules
 
 ```bash
 conflows sync [options]
 ```
 
 **Options:**
-- `--ides <ides>` - Specify target IDEs (comma-separated, default: cursor,windsurf)
+- `--type <type>` - Sync type: `commands`, `rules`, or `all` (default: all)
+- `--ides <ides>` - Specify target IDEs (comma-separated, default: cursor,windsurf,vscode)
 - `--include <files>` - Additional files to include (comma-separated)
 - `--exclude <files>` - Files to exclude (comma-separated)
 - `--dry-run` - Preview without writing
@@ -76,23 +117,32 @@ conflows sync [options]
 **Examples:**
 
 ```bash
+# Sync everything to all IDEs
+conflows sync
+
+# Sync only commands
+conflows sync --type commands
+
+# Sync only rules
+conflows sync --type rules
+
 # Preview sync
 conflows sync --dry-run
 
-# Sync to Cursor only
-conflows sync --ides cursor
+# Sync to specific IDEs
+conflows sync --ides cursor,vscode
 
 # Exclude specific files
-conflows sync --exclude old-workflow.md
+conflows sync --exclude old-file.mdc
 ```
 
-### `list` - List All Workflows
+### `list` - List All Commands and Rules
 
 ```bash
 conflows list
 ```
 
-Shows all workflows in the central directory with their sizes and modification dates.
+Shows all commands and rules in the central directory with their sizes and modification dates.
 
 ## Usage Step
 
@@ -102,23 +152,27 @@ Shows all workflows in the central directory with their sizes and modification d
 # 1. Initialize
 conflows init
 
-# 2. Create workflows
-cd ~/.conflows/workflows
-vim code-review.md
-vim refactor-helper.md
+# 2. Create commands and rules
+cd ~/.conflows/commands
+vim code-review.mdc
+vim refactor-helper.mdc
+
+cd ~/.conflows/rules
+vim typescript-style.mdc
 
 # 3. Navigate to your project
 cd ~/my-project
 
-# 4. Sync workflows
+# 4. Sync everything
 conflows sync
 ```
 
 ### Step 2: Update Workflows
 
 ```bash
-# 1. Edit a workflow
-vim ~/.conflows/workflows/code-review.md
+# 1. Edit a command or rule
+vim ~/.conflows/commands/code-review.mdc
+vim ~/.conflows/rules/typescript-style.mdc
 
 # 2. Sync to all your projects
 cd ~/project-a && conflows sync
@@ -135,15 +189,64 @@ conflows sync
 
 ## How It Works
 
-Conflows uses an **intermediate representation (IR)** to convert workflows between different IDE formats:
+Conflows uses an **intermediate representation (IR)** to convert between different IDE formats:
 
 ```
-Central Storage (Cursor format) → IR → Target IDE Format
+Central Storage (.mdc format) → IR → Target IDE Format
 ```
 
-**Supported IDEs:**
-- **Cursor**: Plain markdown format (`.cursor/commands/`)
-- **Windsurf**: Markdown with YAML frontmatter (`.windsurf/workflows/`)
+### File Format
+
+Central storage uses `.mdc` (Markdown with Context) format:
+- YAML frontmatter for IDE-specific configurations
+- Markdown content for the actual command/rule
+- Namespace-based config (cursor, windsurf, vscode)
+
+### Supported IDEs
+
+| IDE | Commands | Rules |
+|-----|----------|-------|
+| **Cursor** | `.cursor/commands/` (plain markdown) | `.cursor/rules/` (.mdc with frontmatter) |
+| **Windsurf** | `.windsurf/workflows/` (with frontmatter) | `.windsurf/rules/` (with frontmatter) |
+| **VSCode** | `.vscode/prompts/` (with frontmatter) | `.github/instructions/` (with frontmatter) |
+
+### Configuration Examples
+
+**Command Config:**
+```yaml
+---
+description: "Command description"
+
+cursor:
+  # Cursor commands don't need special config
+
+windsurf:
+  auto_execution_mode: 3  # 1=safe, 3=turbo
+
+vscode:
+  mode: agent  # agent | ask | edit
+  model: "GPT-4.1"
+  tools: ["edit", "search"]
+---
+```
+
+**Rule Config:**
+```yaml
+---
+description: "Rule description"
+
+cursor:
+  alwaysApply: true
+  patterns: ["**/*.ts"]
+
+windsurf:
+  mode: always  # always | auto | specific | disabled
+  patterns: ["**/*.ts"]
+
+vscode:
+  applyTo: "**/*.ts"  # glob pattern
+---
+```
 
 ## Development
 

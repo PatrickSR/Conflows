@@ -10,7 +10,7 @@ const program = new Command();
 program
   .name('conflows')
   .description('Centralized IDE workflow manager')
-  .version('0.0.6');
+  .version('0.0.7');
 
 // init command
 program
@@ -21,8 +21,9 @@ program
 // sync command - distribute from central directory to current project
 program
   .command('sync')
-  .description('Distribute workflows from central directory to current project')
-  .option('--ides <ides>', 'Specify IDEs (comma-separated, default: cursor,windsurf)', (value) => value.split(','))
+  .description('Distribute files from central directory to current project')
+  .option('--type <type>', 'Sync type: commands, rules, or all (default: all)')
+  .option('--ides <ides>', 'Specify IDEs (comma-separated, default: cursor,windsurf,vscode)', (value) => value.split(','))
   .option('--include <files>', 'Additional files to include (comma-separated)', (value) => value.split(','))
   .option('--exclude <files>', 'Files to exclude (comma-separated)', (value) => value.split(','))
   .option('--auto-detect', 'Auto-detect installed IDEs (enabled by default when --ides not specified)', true)
@@ -32,7 +33,7 @@ program
 // list command
 program
   .command('list')
-  .description('List all workflows in central directory')
+  .description('List all commands and rules in central directory')
   .action(() => listCommand());
 
 program.parse();

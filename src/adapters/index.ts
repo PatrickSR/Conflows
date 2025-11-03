@@ -1,11 +1,13 @@
 import type { IDEAdapter } from '../types/index.js';
 import { WindsurfAdapter } from './windsurf.js';
 import { CursorAdapter } from './cursor.js';
+import { VscodeAdapter } from './vscode.js';
 
 /** Registered adapters */
 export const ADAPTERS: Record<string, IDEAdapter> = {
-  windsurf: new WindsurfAdapter(),
   cursor: new CursorAdapter(),
+  windsurf: new WindsurfAdapter(),
+  vscode: new VscodeAdapter(),
 };
 
 /** Get adapter by name */

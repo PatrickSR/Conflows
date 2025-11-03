@@ -1,13 +1,22 @@
 import matter from 'gray-matter';
-import type { IDEAdapter, WorkflowIR } from '../types/index.js';
+import type { IDEAdapter, CommandIR, RuleIR } from '../types/index.js';
 
 /**
- * Pure markdown format adapter
- * Outputs plain markdown without frontmatter
+ * Cursor IDE adapter
+ * 
+ * Commands: Plain markdown format without frontmatter (.cursor/commands/)
+ * Rules: Markdown with YAML frontmatter (.cursor/rules/ with .mdc extension)
  */
 export class CursorAdapter implements IDEAdapter {
   name = 'cursor';
-  dirPath = '.cursor/commands';
+  commandDirPath = '.cursor/commands';
+  ruleDirPath = '.cursor/rules';
+  ruleFileExtension = '.mdc';
+  
+  /** @deprecated Use commandDirPath instead */
+  get dirPath() {
+    return this.commandDirPath;
+  }
   
   installationPaths = {
     darwin: [
@@ -27,29 +36,89 @@ export class CursorAdapter implements IDEAdapter {
   };
   
   /**
-   * Parse to intermediate representation
+   * Parse command to intermediate representation
    */
-  parse(content: string, filename: string): WorkflowIR {
-    // Parse frontmatter (if exists)
+  parseCommand(content: string, filename: string): CommandIR {
     const parsed = matter(content);
-    const data = parsed.data as { description?: string };
+    const data = parsed.data as {
+      description?: string;
+      tags?: string[];
+      cursor?: any;
+      windsurf?: any;
+      vscode?: any;
+    };
     
     // Try to extract description from content or filename
     const description = data.description || this.extractDescription(parsed.content, filename);
     
     return {
-      name: filename.replace('.md', ''),
+      name: filename.replace(/\.(md|mdc)$/, ''),
       description,
       content: parsed.content.trim(),
-      config: data,
+      tags: data.tags,
+      cursor: data.cursor,
+      windsurf: data.windsurf,
+      vscode: data.vscode,
     };
   }
   
   /**
-   * Serialize to plain markdown (without frontmatter)
+   * Serialize command to plain markdown (without frontmatter)
    */
-  serialize(workflow: WorkflowIR): string {
-    return workflow.content;
+  serializeCommand(command: CommandIR): string {
+    return command.content;
+  }
+  
+  /**
+   * Parse rule to intermediate representation
+   */
+  parseRule(content: string, filename: string): RuleIR {
+    const parsed = matter(content);
+    const data = parsed.data as {
+      description?: string;
+      tags?: string[];
+      cursor?: any;
+      windsurf?: any;
+      vscode?: any;
+    };
+    
+    return {
+      name: filename.replace(/\.(md|mdc)$/, ''),
+      description: data.description || '',
+      content: parsed.content.trim(),
+      tags: data.tags,
+      cursor: data.cursor,
+      windsurf: data.windsurf,
+      vscode: data.vscode,
+    };
+  }
+  
+  /**
+   * Serialize rule to Cursor format (.mdc with frontmatter)
+   */
+  serializeRule(rule: RuleIR): string {
+    const cursorConfig = rule.cursor || {};
+    
+    const frontmatter: Record<string, any> = {
+      alwaysApply: cursorConfig.alwaysApply ?? false,
+    };
+    
+    // Only add patterns if they exist
+    if (cursorConfig.patterns && cursorConfig.patterns.length > 0) {
+      frontmatter.patterns = cursorConfig.patterns;
+    }
+    
+    return matter.stringify(rule.content, frontmatter);
+  }
+  
+  /** @deprecated Use parseCommand instead */
+  parse(content: string, filename: string): CommandIR {
+    return this.parseCommand(content, filename);
+  }
+  
+  /** @deprecated Use serializeCommand instead */
+  serialize(command: CommandIR): string {
+    return this.serializeCommand(command);
   }
   
   /**
