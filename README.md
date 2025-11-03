@@ -1,5 +1,9 @@
 # Conflows
 
+[![NPM Version](https://img.shields.io/npm/v/conflows)](https://www.npmjs.com/package/conflows)
+[![Test](https://github.com/PatrickSR/sync-workflow-cli/actions/workflows/test.yml/badge.svg)](https://github.com/PatrickSR/sync-workflow-cli/actions/workflows/test.yml)
+[![License](https://img.shields.io/npm/l/conflows)](./LICENSE)
+
 **Con**text + Work**flow**s - A centralized IDE workflow manager.
 
 Conflows helps you manage and distribute AI-powered workflows across multiple IDEs (Cursor, Windsurf, etc.) from a single source of truth.
@@ -90,9 +94,9 @@ conflows list
 
 Shows all workflows in the central directory with their sizes and modification dates.
 
-## Usage Scenarios
+## Usage Step
 
-### Scenario 1: First-Time Setup
+### Step 1: First-Time Setup
 
 ```bash
 # 1. Initialize
@@ -110,7 +114,7 @@ cd ~/my-project
 conflows sync
 ```
 
-### Scenario 2: Update Workflows
+### Step 2: Update Workflows
 
 ```bash
 # 1. Edit a workflow
@@ -121,7 +125,7 @@ cd ~/project-a && conflows sync
 cd ~/project-b && conflows sync
 ```
 
-### Scenario 3: New Project Setup
+### Step 3: New Project Setup
 
 ```bash
 # Quick setup for a new project

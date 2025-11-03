@@ -10,7 +10,7 @@ const program = new Command();
 program
   .name('conflows')
   .description('Centralized IDE workflow manager')
-  .version('0.0.5');
+  .version('0.0.6');
 
 // init command
 program
