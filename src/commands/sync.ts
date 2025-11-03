@@ -3,26 +3,26 @@ import { Distributor } from '../core/distributor.js';
 import { logger } from '../utils/logger.js';
 import type { SyncOptions, ResolvedConfig } from '../types/index.js';
 
-/** 默认的 IDE 列表 */
+/** Default IDE list */
 const DEFAULT_IDES = ['cursor', 'windsurf'];
 
-/** 同步工作流命令 - 从中心目录下发到当前项目 */
+/** Sync workflow command - distribute from central directory to current project */
 export async function syncCommand(options: SyncOptions): Promise<void> {
   try {
     const centralManager = new CentralManager();
     const distributor = new Distributor();
 
-    // 检查中心目录是否已初始化
+    // Check if central directory is initialized
     if (!await centralManager.isInitialized()) {
       logger.error('❌ 中心目录未初始化');
       logger.info('请先运行: conflow init');
       process.exit(1);
     }
 
-    // 使用当前目录
+    // Use current directory
     const projectDir = process.cwd();
 
-    // 扫描所有 workflows（全量）
+    // Scan all workflows (full)
     const allWorkflows = await centralManager.scanWorkflows();
     let workflows = allWorkflows.map(w => w.name);
     
@@ -32,17 +32,17 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
       return;
     }
 
-    // 处理 include
+    // Handle include
     if (options.include && options.include.length > 0) {
       workflows.push(...options.include);
     }
 
-    // 处理 exclude
+    // Handle exclude
     if (options.exclude && options.exclude.length > 0) {
       workflows = workflows.filter(w => !options.exclude?.includes(w));
     }
 
-    // 去重
+    // Deduplicate
     workflows = [...new Set(workflows)];
 
     if (workflows.length === 0) {
@@ -50,7 +50,7 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
       return;
     }
 
-    // 构建最终配置（使用硬编码默认值）
+    // Build final config (using hardcoded defaults)
     const resolvedConfig: ResolvedConfig = {
       ides: options.ides || DEFAULT_IDES,
       workflows,
@@ -58,7 +58,7 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
       exclude: options.exclude || [],
     };
 
-    // 执行同步
+    // Execute sync
     await distributor.distribute(projectDir, resolvedConfig, options.dryRun || false);
   } catch (error) {
     if (error instanceof Error) {

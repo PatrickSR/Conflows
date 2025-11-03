@@ -3,7 +3,7 @@ import os from 'os';
 import type { WorkflowFile } from '../types/index.js';
 import { fs } from '../utils/fs.js';
 
-/** 中心目录管理器 */
+/** Central directory manager */
 export class CentralManager {
   private centralPath: string;
   private workflowsPath: string;
@@ -13,27 +13,27 @@ export class CentralManager {
     this.workflowsPath = path.join(this.centralPath, 'workflows');
   }
 
-  /** 获取中心目录路径 */
+  /** Get central directory path */
   getCentralPath(): string {
     return this.centralPath;
   }
 
-  /** 获取 workflows 目录路径 */
+  /** Get workflows directory path */
   getWorkflowsPath(): string {
     return this.workflowsPath;
   }
 
-  /** 检查中心目录是否已初始化 */
+  /** Check if central directory is initialized */
   async isInitialized(): Promise<boolean> {
     return await fs.exists(this.workflowsPath);
   }
 
-  /** 初始化中心目录 */
+  /** Initialize central directory */
   async init(): Promise<void> {
     await fs.ensureDir(this.workflowsPath);
   }
 
-  /** 扫描所有 workflow 文件 */
+  /** Scan all workflow files */
   async scanWorkflows(): Promise<WorkflowFile[]> {
     if (!await fs.exists(this.workflowsPath)) {
       return [];
@@ -53,7 +53,7 @@ export class CentralManager {
         name: filename,
         path: filepath,
         content,
-        ide: 'central', // 标记为来自中心目录
+        ide: 'central', // Mark as from central directory
         size: stats.size,
         mtime: stats.mtime,
       });
@@ -62,7 +62,7 @@ export class CentralManager {
     return workflows;
   }
 
-  /** 获取指定 workflow 文件 */
+  /** Get specific workflow file */
   async getWorkflow(filename: string): Promise<WorkflowFile | null> {
     const filepath = path.join(this.workflowsPath, filename);
     

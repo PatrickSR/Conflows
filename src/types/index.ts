@@ -1,4 +1,4 @@
-/** 工作流中间格式 */
+/** Workflow intermediate representation (IR) */
 export interface WorkflowIR {
   name: string;
   description: string;
@@ -9,7 +9,7 @@ export interface WorkflowIR {
   };
 }
 
-/** 工作流文件信息 */
+/** Workflow file information */
 export interface WorkflowFile {
   name: string;
   path: string;
@@ -19,7 +19,7 @@ export interface WorkflowFile {
   mtime: Date;
 }
 
-/** IDE 适配器接口 */
+/** IDE adapter interface */
 export interface IDEAdapter {
   name: string;
   dirPath: string;
@@ -27,7 +27,7 @@ export interface IDEAdapter {
   serialize(workflow: WorkflowIR): string;
 }
 
-/** 同步选项 */
+/** Sync options */
 export interface SyncOptions {
   tags?: string[];
   ides?: string[];
@@ -36,14 +36,14 @@ export interface SyncOptions {
   dryRun?: boolean;
 }
 
-/** 冲突信息 */
+/** Conflict information */
 export interface Conflict {
   filename: string;
   fromFile: WorkflowFile;
   toFile: WorkflowFile;
 }
 
-/** 解析后的配置 */
+/** Resolved configuration */
 export interface ResolvedConfig {
   ides: string[];
   workflows: string[];

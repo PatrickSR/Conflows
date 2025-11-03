@@ -2,30 +2,30 @@ import matter from "gray-matter";
 import type { IDEAdapter, WorkflowIR } from "../types/index.js";
 
 /**
- * Windsurf 适配器
+ * Windsurf adapter
  *
- * Windsurf 使用带 YAML frontmatter 的 markdown 格式
+ * Windsurf uses markdown format with YAML frontmatter
  *
- * 格式示例：
+ * Format example:
  * ```markdown
  * ---
- * description: 工作流描述
+ * description: workflow description
  * auto_execution_mode: 3
  * ---
  *
- * 工作流正文内容...
+ * Workflow content...
  * ```
  *
  * auto_execution_mode:
- * - 1 = Safe mode（安全模式）
- * - 3 = Turbo mode（快速模式）
+ * - 1 = Safe mode
+ * - 3 = Turbo mode
  */
 export class WindsurfAdapter implements IDEAdapter {
   name = "windsurf";
   dirPath = ".windsurf/workflows";
 
   /**
-   * 解析为中间格式
+   * Parse to intermediate representation
    */
   parse(content: string, filename: string): WorkflowIR {
     const parsed = matter(content);
@@ -45,7 +45,7 @@ export class WindsurfAdapter implements IDEAdapter {
   }
 
   /**
-   * 序列化为 frontmatter + markdown
+   * Serialize to frontmatter + markdown
    */
   serialize(workflow: WorkflowIR): string {
     const autoExecutionMode =
@@ -57,7 +57,7 @@ export class WindsurfAdapter implements IDEAdapter {
     });
   }
 
-  /** 映射执行模式：3=turbo, 其他=safe */
+  /** Map execution mode: 3=turbo, others=safe */
   private mapExecutionMode(mode?: number): "safe" | "turbo" {
     return mode === 3 ? "turbo" : "safe";
   }

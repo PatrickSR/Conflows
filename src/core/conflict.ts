@@ -3,9 +3,9 @@ import matter from 'gray-matter';
 import type { WorkflowFile, Conflict } from '../types/index.js';
 import { logger } from '../utils/logger.js';
 
-/** 冲突解决器 */
+/** Conflict resolver */
 export class ConflictResolver {
-  /** 查找同名但内容不同的文件（忽略 frontmatter） */
+  /** Find files with same name but different content (ignoring frontmatter) */
   findConflicts(fromFiles: WorkflowFile[], toFiles: WorkflowFile[]): Conflict[] {
     const conflicts: Conflict[] = [];
     
@@ -13,7 +13,7 @@ export class ConflictResolver {
       const toFile = toFiles.find(f => f.name === fromFile.name);
       
       if (toFile) {
-        // 对比内容（忽略可能的 frontmatter 差异）
+        // Compare content (ignoring potential frontmatter differences)
         const fromBody = this.extractBody(fromFile.content);
         const toBody = this.extractBody(toFile.content);
         
@@ -30,7 +30,7 @@ export class ConflictResolver {
     return conflicts;
   }
   
-  /** 交互式解决冲突，返回用户选择 */
+  /** Interactively resolve conflicts, return user choices */
   async resolve(conflicts: Conflict[], fromIde: string, toIde: string): Promise<Map<string, 'from' | 'to' | 'skip'>> {
     const choices = new Map<string, 'from' | 'to' | 'skip'>();
     
@@ -64,7 +64,7 @@ export class ConflictResolver {
     return choices;
   }
   
-  /** 提取正文（去除 frontmatter） */
+  /** Extract body (remove frontmatter) */
   private extractBody(content: string): string {
     const parsed = matter(content);
     return parsed.content.trim();

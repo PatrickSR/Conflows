@@ -3,11 +3,11 @@ import type { WorkflowFile } from '../types/index.js';
 import { fs } from '../utils/fs.js';
 import { getAdapter, getAllIDENames } from '../adapters/index.js';
 
-/** 文件扫描器 */
+/** File scanner */
 export class Scanner {
   private cwd = process.cwd();
   
-  /** 扫描指定 IDE 的工作流 */
+  /** Scan workflows for specified IDE */
   async scan(ideName: string): Promise<WorkflowFile[]> {
     const adapter = getAdapter(ideName);
     const dir = path.join(this.cwd, adapter.dirPath);
@@ -39,11 +39,11 @@ export class Scanner {
     return workflows;
   }
   
-  /** 扫描所有 IDE */
+  /** Scan all IDEs */
   async scanAll(): Promise<Map<string, WorkflowFile[]>> {
     const results = new Map<string, WorkflowFile[]>();
     
-    // 动态获取所有已注册的 IDE
+    // Dynamically get all registered IDEs
     const ideNames = getAllIDENames();
     
     for (const ideName of ideNames) {

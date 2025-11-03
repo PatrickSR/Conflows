@@ -1,7 +1,7 @@
 import { CentralManager } from '../core/central-manager.js';
 import { logger } from '../utils/logger.js';
 
-/** 初始化中心目录命令 */
+/** Initialize central directory command */
 export async function initCommand(): Promise<void> {
   try {
     const manager = new CentralManager();

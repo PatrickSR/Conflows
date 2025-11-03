@@ -12,13 +12,13 @@ program
   .description('集中管理和分发 workflow 工具')
   .version('0.0.2');
 
-// init 命令
+// init command
 program
   .command('init')
   .description('初始化中心目录')
   .action(initCommand);
 
-// sync 命令 - 从中心目录下发到当前项目
+// sync command - distribute from central directory to current project
 program
   .command('sync')
   .description('从中心目录下发所有 workflow 到当前项目')
@@ -28,7 +28,7 @@ program
   .option('--dry-run', '预览但不实际写入')
   .action((options) => syncCommand(options));
 
-// list 命令
+// list command
 program
   .command('list')
   .description('列出中心目录的所有 workflows')

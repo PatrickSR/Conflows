@@ -2,28 +2,28 @@ import type { IDEAdapter } from '../types/index.js';
 import { WindsurfAdapter } from './windsurf.js';
 import { CursorAdapter } from './cursor.js';
 
-/** 已注册的适配器 */
+/** Registered adapters */
 export const ADAPTERS: Record<string, IDEAdapter> = {
   windsurf: new WindsurfAdapter(),
   cursor: new CursorAdapter(),
 };
 
-/** 获取适配器 */
+/** Get adapter by name */
 export function getAdapter(name: string): IDEAdapter {
   const adapter = ADAPTERS[name];
   if (!adapter) {
     const available = Object.keys(ADAPTERS).join(', ');
-    throw new Error(`未知的 IDE: ${name}。支持: ${available}`);
+    throw new Error(`Unknown IDE: ${name}. Supported: ${available}`);
   }
   return adapter;
 }
 
-/** 获取所有适配器 */
+/** Get all adapters */
 export function getAllAdapters(): IDEAdapter[] {
   return Object.values(ADAPTERS);
 }
 
-/** 获取所有 IDE 名称 */
+/** Get all IDE names */
 export function getAllIDENames(): string[] {
   return Object.keys(ADAPTERS);
 }

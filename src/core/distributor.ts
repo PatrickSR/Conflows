@@ -6,14 +6,14 @@ import { getAdapter } from '../adapters/index.js';
 import { Transformer } from './transformer.js';
 import { CentralManager } from './central-manager.js';
 
-/** 同步计划 */
+/** Sync plan */
 export interface SyncPlan {
   workflows: string[];
   ides: string[];
   totalFiles: number;
 }
 
-/** Workflow 分发器 */
+/** Workflow distributor */
 export class Distributor {
   private centralManager: CentralManager;
   private transformer: Transformer;
@@ -23,7 +23,7 @@ export class Distributor {
     this.transformer = new Transformer();
   }
 
-  /** 下发 workflows 到项目 */
+  /** Distribute workflows to project */
   async distribute(
     projectPath: string,
     config: ResolvedConfig,
@@ -31,13 +31,13 @@ export class Distributor {
   ): Promise<void> {
     const absProjectPath = path.resolve(projectPath);
 
-    // 获取最终的 workflow 列表
+    // Get final workflow list
     const workflowFiles = new Set<string>([
       ...config.workflows,
       ...config.include,
     ]);
 
-    // 排除指定的文件
+    // Exclude specified files
     config.exclude.forEach(f => workflowFiles.delete(f));
 
     const workflows = Array.from(workflowFiles);
@@ -47,7 +47,7 @@ export class Distributor {
       return;
     }
 
-    // 显示同步计划
+    // Show sync plan
     logger.info(`\n🎯 项目: ${absProjectPath}`);
     logger.info(`📦 模式: ${dryRun ? '预览' : '执行'}`);
     logger.info(`   IDEs: ${config.ides.join(', ')}`);
@@ -74,15 +74,15 @@ export class Distributor {
 
     let syncCount = 0;
 
-    // 对每个 IDE 进行同步
+    // Sync for each IDE
     for (const ideName of config.ides) {
       const adapter = getAdapter(ideName);
       const ideDir = path.join(absProjectPath, adapter.dirPath);
 
-      // 确保 IDE 目录存在
+      // Ensure IDE directory exists
       await fs.ensureDir(ideDir);
 
-      // 同步每个 workflow
+      // Sync each workflow
       for (const workflowName of workflows) {
         const workflow = await this.centralManager.getWorkflow(workflowName);
         
@@ -91,7 +91,7 @@ export class Distributor {
           continue;
         }
 
-        // 转换格式（中心目录使用 Cursor 格式，即纯 markdown）
+        // Convert format (central directory uses Cursor format, i.e., plain markdown)
         const converted = this.transformer.transform(
           workflow.content,
           workflow.name,
@@ -99,7 +99,7 @@ export class Distributor {
           ideName
         );
 
-        // 写入文件
+        // Write file
         const targetPath = path.join(ideDir, workflowName);
         await fs.writeFile(targetPath, converted, 'utf-8');
         

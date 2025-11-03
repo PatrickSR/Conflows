@@ -1,12 +1,12 @@
 import { CentralManager } from '../core/central-manager.js';
 import { logger } from '../utils/logger.js';
 
-/** 列出工作流命令 */
+/** List workflows command */
 export async function listCommand(): Promise<void> {
   try {
     const centralManager = new CentralManager();
 
-    // 检查中心目录是否已初始化
+    // Check if central directory is initialized
     if (!await centralManager.isInitialized()) {
       logger.error('❌ 中心目录未初始化');
       logger.info('请先运行: conflow init');

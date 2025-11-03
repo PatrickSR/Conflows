@@ -2,22 +2,22 @@ import matter from 'gray-matter';
 import type { IDEAdapter, WorkflowIR } from '../types/index.js';
 
 /**
- * 纯 markdown 格式适配器
- * 输出不带 frontmatter 的纯 markdown
+ * Pure markdown format adapter
+ * Outputs plain markdown without frontmatter
  */
 export class CursorAdapter implements IDEAdapter {
   name = 'cursor';
   dirPath = '.cursor/commands';
   
   /**
-   * 解析为中间格式
+   * Parse to intermediate representation
    */
   parse(content: string, filename: string): WorkflowIR {
-    // 解析 frontmatter（如果存在）
+    // Parse frontmatter (if exists)
     const parsed = matter(content);
     const data = parsed.data as { description?: string };
     
-    // 尝试从内容或文件名提取 description
+    // Try to extract description from content or filename
     const description = data.description || this.extractDescription(parsed.content, filename);
     
     return {
@@ -29,30 +29,30 @@ export class CursorAdapter implements IDEAdapter {
   }
   
   /**
-   * 序列化为纯 markdown（无 frontmatter）
+   * Serialize to plain markdown (without frontmatter)
    */
   serialize(workflow: WorkflowIR): string {
     return workflow.content;
   }
   
   /**
-   * 提取描述：标题 > 首段 > 文件名
+   * Extract description: title > first paragraph > filename
    */
   private extractDescription(content: string, filename: string): string {
-    // 1. 尝试从第一行提取（如果是 markdown 标题）
+    // 1. Try to extract from first line (if it's a markdown heading)
     const firstLine = content.split('\n')[0]?.trim();
     if (firstLine?.startsWith('#')) {
       return firstLine.replace(/^#+\s*/, '');
     }
     
-    // 2. 尝试从第一段提取（取前 50 字符）
+    // 2. Try to extract from first paragraph (first 50 chars)
     const firstParagraph = content.split('\n\n')[0]?.trim();
     if (firstParagraph && firstParagraph.length > 0) {
       const desc = firstParagraph.substring(0, 50);
       return desc.length < firstParagraph.length ? desc + '...' : desc;
     }
     
-    // 3. 使用文件名
+    // 3. Use filename
     return filename
       .replace('.md', '')
       .replace(/-/g, ' ')
