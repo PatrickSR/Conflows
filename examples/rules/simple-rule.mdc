@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/PatrickSR/Conflows/main/schema/conflows-mdc.schema.json
+---
+description: "Basic coding standards"
+---
+
+# Coding Standards
+
+- Write clear and concise code
+- Add comments for complex logic
+- Follow the project's style guide
