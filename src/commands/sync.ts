@@ -3,6 +3,9 @@ import { Distributor } from '../core/distributor.js';
 import { logger } from '../utils/logger.js';
 import type { SyncOptions, ResolvedConfig } from '../types/index.js';
 
+/** 默认的 IDE 列表 */
+const DEFAULT_IDES = ['cursor', 'windsurf'];
+
 /** 同步工作流命令 - 从中心目录下发到当前项目 */
 export async function syncCommand(options: SyncOptions): Promise<void> {
   try {
@@ -18,30 +21,15 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
 
     // 使用当前目录
     const projectDir = process.cwd();
-    const config = await centralManager.getConfig();
 
-    // 解析 workflows
-    let workflows: string[];
-
-    if (options.tags && options.tags.length > 0) {
-      // 指定了 tags，根据 tags 解析
-      workflows = centralManager.resolveWorkflowsByTags(config, options.tags);
-      
-      if (workflows.length === 0) {
-        logger.warn(`⚠️  指定的 tags 没有对应的 workflows`);
-        logger.info('提示: 检查 ~/.sync-workflow/config.json 中的 tags 配置');
-        return;
-      }
-    } else {
-      // 未指定 tags，全量同步
-      const allWorkflows = await centralManager.scanWorkflows();
-      workflows = allWorkflows.map(w => w.name);
-      
-      if (workflows.length === 0) {
-        logger.warn('⚠️  中心目录没有 workflow 文件');
-        logger.info(`请在 ${centralManager.getWorkflowsPath()} 中创建 .md 文件`);
-        return;
-      }
+    // 扫描所有 workflows（全量）
+    const allWorkflows = await centralManager.scanWorkflows();
+    let workflows = allWorkflows.map(w => w.name);
+    
+    if (workflows.length === 0) {
+      logger.warn('⚠️  中心目录没有 workflow 文件');
+      logger.info(`请在 ${centralManager.getWorkflowsPath()} 中创建 .md 文件`);
+      return;
     }
 
     // 处理 include
@@ -62,10 +50,9 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
       return;
     }
 
-    // 构建最终配置
+    // 构建最终配置（使用硬编码默认值）
     const resolvedConfig: ResolvedConfig = {
-      tags: options.tags || [],
-      ides: options.ides || config.defaultIDEs,
+      ides: options.ides || DEFAULT_IDES,
       workflows,
       include: options.include || [],
       exclude: options.exclude || [],

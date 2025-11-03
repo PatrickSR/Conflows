@@ -18,13 +18,12 @@ export async function initCommand(): Promise<void> {
     await manager.init();
 
     logger.success('✅ 初始化完成!\n');
-    logger.info(`中心目录: ${manager.getCentralPath()}`);
-    logger.info(`Workflows: ${manager.getWorkflowsPath()}`);
+    logger.info(`Workflows 目录: ${manager.getWorkflowsPath()}`);
     logger.info('');
     logger.info('接下来:');
-    logger.info(`  1. 在 ${manager.getWorkflowsPath()} 中创建 workflow 文件`);
-    logger.info(`  2. 编辑 ${manager.getCentralPath()}/config.json 定义 tags`);
-    logger.info('  3. 运行 sync-workflow sync <project-dir> --tags <tags> 下发到项目');
+    logger.info(`  1. 在 ${manager.getWorkflowsPath()} 中创建 .md 文件`);
+    logger.info('  2. cd 到项目目录');
+    logger.info('  3. 运行 sync-workflow sync');
     logger.info('');
   } catch (error) {
     if (error instanceof Error) {

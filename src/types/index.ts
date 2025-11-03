@@ -43,29 +43,8 @@ export interface Conflict {
   toFile: WorkflowFile;
 }
 
-/** 中心配置 */
-export interface CentralConfig {
-  version: string;
-  defaultIDEs: string[];
-  tags: Record<string, TagConfig>;
-  workflowMeta: Record<string, WorkflowMeta>;
-}
-
-/** Tag 配置 */
-export interface TagConfig {
-  description: string;
-  workflows: string[];
-}
-
-/** Workflow 元数据 */
-export interface WorkflowMeta {
-  description: string;
-  executionMode?: 'safe' | 'turbo' | 'auto';
-}
-
 /** 解析后的配置 */
 export interface ResolvedConfig {
-  tags: string[];
   ides: string[];
   workflows: string[];
   include: string[];

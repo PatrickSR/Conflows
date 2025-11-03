@@ -21,9 +21,8 @@ program
 // sync 命令 - 从中心目录下发到当前项目
 program
   .command('sync')
-  .description('从中心目录下发 workflow 到当前项目')
-  .option('--tags <tags>', '指定 tags（逗号分隔），不指定则全量同步', (value) => value.split(','))
-  .option('--ides <ides>', '指定 IDE（逗号分隔）', (value) => value.split(','))
+  .description('从中心目录下发所有 workflow 到当前项目')
+  .option('--ides <ides>', '指定 IDE（逗号分隔，默认: cursor,windsurf）', (value) => value.split(','))
   .option('--include <files>', '额外包含的文件（逗号分隔）', (value) => value.split(','))
   .option('--exclude <files>', '排除的文件（逗号分隔）', (value) => value.split(','))
   .option('--dry-run', '预览但不实际写入')
@@ -32,8 +31,7 @@ program
 // list 命令
 program
   .command('list')
-  .description('列出中心目录的 workflows')
-  .option('--tag <name>', '按 tag 筛选')
-  .action((options) => listCommand(options));
+  .description('列出中心目录的所有 workflows')
+  .action(() => listCommand());
 
 program.parse();

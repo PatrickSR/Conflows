@@ -49,15 +49,13 @@ export class Distributor {
 
     // 显示同步计划
     logger.info(`\n🎯 项目: ${absProjectPath}`);
-    logger.info(`📦 配置: ${dryRun ? '预览模式' : '执行模式'}`);
-    logger.info(`   Tags: ${config.tags.join(', ')}`);
+    logger.info(`📦 模式: ${dryRun ? '预览' : '执行'}`);
     logger.info(`   IDEs: ${config.ides.join(', ')}`);
     logger.info('');
-    logger.info(`📋 将要同步的文件 (${workflows.length}个):`);
+    logger.info(`📋 同步文件 (${workflows.length} 个):`);
     
     workflows.forEach(w => {
-      const tags = this.findTagsForWorkflow(w, config.tags);
-      logger.info(`   ✓ ${w}${tags ? ` (${tags})` : ''}`);
+      logger.info(`   ✓ ${w}`);
     });
     
     logger.info('');
@@ -111,26 +109,5 @@ export class Distributor {
     }
 
     logger.success(`\n✅ 完成! 已同步 ${workflows.length} 个 workflow 到 ${config.ides.length} 个 IDE`);
-  }
-
-  /** 预览同步计划 */
-  async preview(projectPath: string, config: ResolvedConfig): Promise<SyncPlan> {
-    const workflowFiles = new Set<string>([
-      ...config.workflows,
-      ...config.include,
-    ]);
-
-    config.exclude.forEach(f => workflowFiles.delete(f));
-
-    return {
-      workflows: Array.from(workflowFiles),
-      ides: config.ides,
-      totalFiles: workflowFiles.size * config.ides.length,
-    };
-  }
-
-  /** 查找 workflow 所属的 tags */
-  private findTagsForWorkflow(workflow: string, tags: string[]): string {
-    return tags.join(', ');
   }
 }
