@@ -3,6 +3,26 @@
   "version": "0.0.3",
   "description": "同步 Cursor 和 Windsurf 工作流的 CLI 工具",
   "type": "module",
+  "author": "Patrick",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/patrick/sync-workflow-cli.git"
+  },
+  "keywords": [
+    "workflow",
+    "ide",
+    "cursor",
+    "windsurf",
+    "cli",
+    "sync",
+    "context"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "bin": {
     "sync-workflow": "./dist/cli.js"
   },
