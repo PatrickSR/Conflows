@@ -1,12 +1,12 @@
-# Conflow
+# Conflows
 
-**Con**text + Work**flow** - A centralized IDE workflow manager.
+**Con**text + Work**flow**s - A centralized IDE workflow manager.
 
-Conflow helps you manage and distribute AI-powered workflows across multiple IDEs (Cursor, Windsurf, etc.) from a single source of truth.
+Conflows helps you manage and distribute AI-powered workflows across multiple IDEs (Cursor, Windsurf, etc.) from a single source of truth.
 
 ## Core Features
 
-- **Centralized Management**: All workflows stored in `~/.conflow/` 
+- **Centralized Management**: All workflows stored in `~/.conflows/` 
 - **Zero Pollution**: No config files cluttering your project directories
 - **IDE Agnostic**: Seamless conversion between IDE formats via adapters
 - **Simple Distribution**: One command to sync workflows to your projects
@@ -16,18 +16,18 @@ Conflow helps you manage and distribute AI-powered workflows across multiple IDE
 ### 1. Initialize Central Directory
 
 ```bash
-conflow init
+conflows init
 ```
 
-This creates the `~/.conflow/` directory structure:
+This creates the `~/.conflows/` directory structure:
 - `workflows/` - Store all your workflow markdown files here
 
 ### 2. Create Workflows
 
-Create markdown files in `~/.conflow/workflows/`:
+Create markdown files in `~/.conflows/workflows/`:
 
 ```bash
-cd ~/.conflow/workflows
+cd ~/.conflows/workflows
 echo "# Code Review\n\nReview code changes..." > code-review.md
 ```
 
@@ -38,13 +38,13 @@ echo "# Code Review\n\nReview code changes..." > code-review.md
 cd ~/my-project
 
 # Sync all workflows
-conflow sync
+conflows sync
 
 # Preview before syncing
-conflow sync --dry-run
+conflows sync --dry-run
 
 # Sync to specific IDEs only
-conflow sync --ides cursor
+conflows sync --ides cursor
 ```
 
 ## Commands
@@ -52,15 +52,15 @@ conflow sync --ides cursor
 ### `init` - Initialize Central Directory
 
 ```bash
-conflow init
+conflows init
 ```
 
-Creates the central directory at `~/.conflow/`.
+Creates the central directory at `~/.conflows/`.
 
 ### `sync` - Distribute Workflows
 
 ```bash
-conflow sync [options]
+conflows sync [options]
 ```
 
 **Options:**
@@ -73,19 +73,19 @@ conflow sync [options]
 
 ```bash
 # Preview sync
-conflow sync --dry-run
+conflows sync --dry-run
 
 # Sync to Cursor only
-conflow sync --ides cursor
+conflows sync --ides cursor
 
 # Exclude specific files
-conflow sync --exclude old-workflow.md
+conflows sync --exclude old-workflow.md
 ```
 
 ### `list` - List All Workflows
 
 ```bash
-conflow list
+conflows list
 ```
 
 Shows all workflows in the central directory with their sizes and modification dates.
@@ -96,10 +96,10 @@ Shows all workflows in the central directory with their sizes and modification d
 
 ```bash
 # 1. Initialize
-conflow init
+conflows init
 
 # 2. Create workflows
-cd ~/.conflow/workflows
+cd ~/.conflows/workflows
 vim code-review.md
 vim refactor-helper.md
 
@@ -107,18 +107,18 @@ vim refactor-helper.md
 cd ~/my-project
 
 # 4. Sync workflows
-conflow sync
+conflows sync
 ```
 
 ### Scenario 2: Update Workflows
 
 ```bash
 # 1. Edit a workflow
-vim ~/.conflow/workflows/code-review.md
+vim ~/.conflows/workflows/code-review.md
 
 # 2. Sync to all your projects
-cd ~/project-a && conflow sync
-cd ~/project-b && conflow sync
+cd ~/project-a && conflows sync
+cd ~/project-b && conflows sync
 ```
 
 ### Scenario 3: New Project Setup
@@ -126,12 +126,12 @@ cd ~/project-b && conflow sync
 ```bash
 # Quick setup for a new project
 cd ~/new-project
-conflow sync
+conflows sync
 ```
 
 ## How It Works
 
-Conflow uses an **intermediate representation (IR)** to convert workflows between different IDE formats:
+Conflows uses an **intermediate representation (IR)** to convert workflows between different IDE formats:
 
 ```
 Central Storage (Cursor format) → IR → Target IDE Format

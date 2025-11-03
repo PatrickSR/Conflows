@@ -9,7 +9,7 @@ export async function listCommand(): Promise<void> {
     // Check if central directory is initialized
     if (!await centralManager.isInitialized()) {
       logger.error('❌ Central directory not initialized');
-      logger.info('Please run: conflow init');
+      logger.info('Please run: conflows init');
       process.exit(1);
     }
 

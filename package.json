@@ -1,5 +1,5 @@
 {
-  "name": "conflow-cli",
+  "name": "conflows",
   "version": "0.0.5",
   "description": "Centralized IDE workflow manager - Context + Workflow",
   "type": "module",
@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/patrick/sync-workflow-cli.git"
+    "url": "https://github.com/patrick/sync-workflow-cli.git"
   },
   "keywords": [
     "workflow",
@@ -24,7 +24,7 @@
     "LICENSE"
   ],
   "bin": {
-    "conflow": "dist/cli.js"
+    "conflows": "./dist/cli.js"
   },
   "scripts": {
     "dev": "bun run src/cli.ts",

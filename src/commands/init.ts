@@ -23,7 +23,7 @@ export async function initCommand(): Promise<void> {
     logger.info('Next steps:');
     logger.info(`  1. Create .md files in ${manager.getWorkflowsPath()}`);
     logger.info('  2. cd to your project directory');
-    logger.info('  3. Run conflow sync');
+    logger.info('  3. Run conflows sync');
     logger.info('');
   } catch (error) {
     if (error instanceof Error) {

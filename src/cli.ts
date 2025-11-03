@@ -8,7 +8,7 @@ import { listCommand } from './commands/list.js';
 const program = new Command();
 
 program
-  .name('conflow')
+  .name('conflows')
   .description('Centralized IDE workflow manager')
   .version('0.0.5');
 
