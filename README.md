@@ -192,8 +192,13 @@ conflows sync
 Conflows uses an **intermediate representation (IR)** to convert between different IDE formats:
 
 ```
-Central Storage (.mdc format) → IR → Target IDE Format
+Central Storage (.mdc) → Parse → IR → Serialize → Target IDE Format
 ```
+
+**Central Storage Format**: Independent `.mdc` format (not tied to any specific IDE)
+- YAML frontmatter with namespace-based IDE configurations
+- Serves as the single source of truth
+- Future-proof: Changes to IDE formats won't affect central storage
 
 ### File Format
 

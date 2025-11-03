@@ -113,7 +113,7 @@ export class Distributor {
         const converted = this.transformer.transformCommand(
           command.content,
           command.name,
-          'cursor', // central storage uses cursor-compatible format
+          'central',
           ideName
         );
 
@@ -199,7 +199,7 @@ export class Distributor {
         const converted = this.transformer.transformRule(
           rule.content,
           rule.name,
-          'cursor',
+          'central',
           ideName
         );
 
