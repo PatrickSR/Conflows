@@ -59,6 +59,8 @@ Your command is now available in:
 
 Conflows uses `.mdc` (Markdown with Context) format for central storage:
 
+> **Important**: All files in `~/.conflows/commands/` and `~/.conflows/rules/` must use the `.mdc` extension. Do not use IDE-specific extensions like `.prompt.md` or `.instructions.md` in central storage - these are only for output files.
+
 ```yaml
 # yaml-language-server: $schema=<schema-url>
 ---

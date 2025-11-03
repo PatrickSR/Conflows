@@ -13,15 +13,11 @@ Install the YAML extension for your IDE:
 code --install-extension redhat.vscode-yaml
 ```
 
-**Cursor:**
-```bash
-cursor --install-extension redhat.vscode-yaml
-```
-
-**Windsurf:**
-```bash
-windsurf --install-extension redhat.vscode-yaml
-```
+**Cursor / Windsurf:**
+1. Open Command Palette (`Cmd+Shift+P` on Mac, `Ctrl+Shift+P` on Windows/Linux)
+2. Type "Install Extensions"
+3. Search for "YAML" 
+4. Install "YAML" by Red Hat
 
 Or search for "YAML" in your IDE's extension marketplace and install the Red Hat YAML extension.
 
