@@ -9,7 +9,7 @@ export class CentralManager {
   private workflowsPath: string;
 
   constructor(centralPath?: string) {
-    this.centralPath = centralPath || path.join(os.homedir(), '.sync-workflow');
+    this.centralPath = centralPath || path.join(os.homedir(), '.conflow');
     this.workflowsPath = path.join(this.centralPath, 'workflows');
   }
 

@@ -8,7 +8,7 @@ import { listCommand } from './commands/list.js';
 const program = new Command();
 
 program
-  .name('sync-workflow')
+  .name('conflow')
   .description('集中管理和分发 workflow 工具')
   .version('0.0.2');
 

@@ -9,7 +9,7 @@ export async function listCommand(): Promise<void> {
     // 检查中心目录是否已初始化
     if (!await centralManager.isInitialized()) {
       logger.error('❌ 中心目录未初始化');
-      logger.info('请先运行: sync-workflow init');
+      logger.info('请先运行: conflow init');
       process.exit(1);
     }
 

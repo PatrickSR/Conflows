@@ -1,10 +1,10 @@
-# Sync Workflow
+# Conflow
 
 集中管理和分发 IDE workflow 的 CLI 工具。
 
 ## 核心理念
 
-- **集中管理**：所有 workflow 在 `~/.sync-workflow/` 统一管理
+- **集中管理**：所有 workflow 在 `~/.conflow/` 统一管理
 - **零污染**：项目目录不存放配置文件
 - **灵活配置**：通过 tags 灵活组合 workflows
 - **批量操作**：一次更新，多个项目同步
@@ -15,26 +15,26 @@
 ### 1. 初始化中心目录
 
 ```bash
-sync-workflow init
+conflow init
 ```
 
-这会创建 `~/.sync-workflow/` 目录结构：
+这会创建 `~/.conflow/` 目录结构：
 - `workflows/` - 存放所有 workflow markdown 文件
 - `config.json` - 全局配置（tags 定义）
 - `projects.json` - 项目映射配置
 
 ### 2. 创建 Workflow
 
-在 `~/.sync-workflow/workflows/` 中创建 markdown 文件：
+在 `~/.conflow/workflows/` 中创建 markdown 文件：
 
 ```bash
-cd ~/.sync-workflow/workflows
+cd ~/.conflow/workflows
 echo "# Code Review\n\nReview code changes..." > code-review.md
 ```
 
 ### 3. 配置 Tags
 
-编辑 `~/.sync-workflow/config.json`，定义 tags：
+编辑 `~/.conflow/config.json`，定义 tags：
 
 ```json
 {
@@ -60,13 +60,13 @@ echo "# Code Review\n\nReview code changes..." > code-review.md
 
 ```bash
 # 临时指定 tags
-sync-workflow sync ~/project-a --tags common,frontend
+conflow sync ~/project-a --tags common,frontend
 
 # 保存配置，下次直接使用
-sync-workflow sync ~/project-a --tags common,frontend --save
+conflow sync ~/project-a --tags common,frontend --save
 
 # 后续直接同步
-sync-workflow sync ~/project-a
+conflow sync ~/project-a
 ```
 
 ## 命令说明
@@ -74,13 +74,13 @@ sync-workflow sync ~/project-a
 ### `init` - 初始化中心目录
 
 ```bash
-sync-workflow init
+conflow init
 ```
 
 ### `sync` - 下发 workflows 到项目
 
 ```bash
-sync-workflow sync <project-dir> [options]
+conflow sync <project-dir> [options]
 
 选项:
   --tags <tags>         指定 tags（逗号分隔）
@@ -96,49 +96,49 @@ sync-workflow sync <project-dir> [options]
 
 ```bash
 # 预览将要同步的内容
-sync-workflow sync ~/project --tags common --dry-run
+conflow sync ~/project --tags common --dry-run
 
 # 指定并保存配置
-sync-workflow sync ~/project --tags common,frontend --save
+conflow sync ~/project --tags common,frontend --save
 
 # 批量同步所有项目
-sync-workflow sync --all
+conflow sync --all
 ```
 
 ### `projects` - 管理项目配置
 
 ```bash
 # 列出所有项目
-sync-workflow projects list
+conflow projects list
 
 # 查看项目配置
-sync-workflow projects show <project-dir>
+conflow projects show <project-dir>
 
 # 设置项目配置
-sync-workflow projects set <project-dir> --tags <tags>
+conflow projects set <project-dir> --tags <tags>
 
 # 删除项目配置
-sync-workflow projects remove <project-dir>
+conflow projects remove <project-dir>
 ```
 
 ### `list` - 列出 workflows
 
 ```bash
 # 列出所有 workflows
-sync-workflow list
+conflow list
 
 # 按 tag 筛选
-sync-workflow list --tag common
+conflow list --tag common
 ```
 
 ### `tags` - 管理 tags
 
 ```bash
 # 列出所有 tags
-sync-workflow tags list
+conflow tags list
 
 # 查看 tag 详情
-sync-workflow tags show <tag-name>
+conflow tags show <tag-name>
 ```
 
 ## 使用场景
@@ -147,42 +147,42 @@ sync-workflow tags show <tag-name>
 
 ```bash
 # 1. 初始化
-sync-workflow init
+conflow init
 
 # 2. 创建 workflows
-cd ~/.sync-workflow/workflows
+cd ~/.conflow/workflows
 vim code-review.md
 
 # 3. 编辑 config.json 定义 tags
-vim ~/.sync-workflow/config.json
+vim ~/.conflow/config.json
 
 # 4. 下发到项目
-sync-workflow sync ~/project-a --tags common --save
+conflow sync ~/project-a --tags common --save
 ```
 
 ### 场景 2: 更新 Workflow
 
 ```bash
 # 1. 编辑 workflow
-vim ~/.sync-workflow/workflows/code-review.md
+vim ~/.conflow/workflows/code-review.md
 
 # 2. 批量同步到所有项目
-sync-workflow sync --all
+conflow sync --all
 ```
 
 ### 场景 3: 新项目快速配置
 
 ```bash
 # 方式 A: 临时指定
-sync-workflow sync ~/new-project --tags common,frontend
+conflow sync ~/new-project --tags common,frontend
 
 # 方式 B: 保存配置
-sync-workflow sync ~/new-project --tags common,frontend --save
+conflow sync ~/new-project --tags common,frontend --save
 ```
 
 ## 配置文件
 
-### 全局配置 (`~/.sync-workflow/config.json`)
+### 全局配置 (`~/.conflow/config.json`)
 
 ```json
 {
@@ -203,7 +203,7 @@ sync-workflow sync ~/new-project --tags common,frontend --save
 }
 ```
 
-### 项目映射 (`~/.sync-workflow/projects.json`)
+### 项目映射 (`~/.conflow/projects.json`)
 
 ```json
 {
