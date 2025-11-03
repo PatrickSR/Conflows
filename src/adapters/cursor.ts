@@ -9,6 +9,23 @@ export class CursorAdapter implements IDEAdapter {
   name = 'cursor';
   dirPath = '.cursor/commands';
   
+  installationPaths = {
+    darwin: [
+      '/Applications/Cursor.app'
+    ],
+    win32: [
+      '%PROGRAMFILES%\\Cursor',
+      '%PROGRAMFILES(X86)%\\Cursor',
+      '%LOCALAPPDATA%\\Programs\\Cursor'
+    ],
+    linux: [
+      '/usr/local/bin/cursor',
+      '/opt/cursor',
+      '~/.local/bin/cursor',
+      '~/.local/share/cursor'
+    ]
+  };
+  
   /**
    * Parse to intermediate representation
    */

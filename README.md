@@ -157,31 +157,6 @@ bun run build
 bun test
 ```
 
-## Version History
-
-### v0.0.5 (Current)
-
-- 🌍 **Internationalization**: Full English localization
-- 🔄 **Renamed**: `sync-workflow` → `conflow` (Context + Workflow)
-- 📦 **NPM Ready**: Published to npm registry
-- 📝 **Documentation**: Complete English documentation
-
-### v0.0.2
-
-- 🎉 **Centralized Management**: Implemented central directory for workflows
-- ✨ Added `init` command: Initialize central directory
-- ✨ Refactored `sync` command: Distribute from central to projects
-- ✨ Added `list` command: List all workflows
-- 🧪 Added comprehensive unit tests (21 test cases)
-
-### v0.0.1
-
-- Initial version: Bidirectional sync between Cursor and Windsurf
-
 ## License
 
 MIT
-
-## Contributing
-
-Contributions welcome! Please feel free to submit a Pull Request.

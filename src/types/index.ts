@@ -23,6 +23,14 @@ export interface WorkflowFile {
 export interface IDEAdapter {
   name: string;
   dirPath: string;
+  
+  /** Installation detection paths for different platforms */
+  installationPaths?: {
+    darwin?: string[];   // macOS app names or paths
+    win32?: string[];    // Windows paths (supports env vars)
+    linux?: string[];    // Linux paths (supports ~)
+  };
+  
   parse(content: string, filename: string): WorkflowIR;
   serialize(workflow: WorkflowIR): string;
 }

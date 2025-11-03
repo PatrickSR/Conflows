@@ -25,6 +25,7 @@ program
   .option('--ides <ides>', 'Specify IDEs (comma-separated, default: cursor,windsurf)', (value) => value.split(','))
   .option('--include <files>', 'Additional files to include (comma-separated)', (value) => value.split(','))
   .option('--exclude <files>', 'Files to exclude (comma-separated)', (value) => value.split(','))
+  .option('--auto-detect', 'Auto-detect installed IDEs (enabled by default when --ides not specified)', true)
   .option('--dry-run', 'Preview without writing')
   .action((options) => syncCommand(options));
 

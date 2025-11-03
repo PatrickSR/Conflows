@@ -9,20 +9,20 @@ describe("CentralManager", () => {
   let manager: CentralManager;
 
   beforeEach(async () => {
-    // 创建临时测试目录
+    // Create temporary test directory
     testDir = path.join(os.tmpdir(), `sync-workflow-test-${Date.now()}`);
     manager = new CentralManager(testDir);
   });
 
   afterEach(async () => {
-    // 清理测试目录
+    // Clean up test directory
     if (await fs.exists(testDir)) {
       await fs.remove(testDir);
     }
   });
 
   describe("init", () => {
-    test("应该创建 workflows 目录", async () => {
+    test("should create workflows directory", async () => {
       await manager.init();
 
       expect(await fs.exists(manager.getWorkflowsPath())).toBe(true);
@@ -30,18 +30,18 @@ describe("CentralManager", () => {
   });
 
   describe("isInitialized", () => {
-    test("未初始化时应该返回 false", async () => {
+    test("should return false when not initialized", async () => {
       expect(await manager.isInitialized()).toBe(false);
     });
 
-    test("初始化后应该返回 true", async () => {
+    test("should return true when initialized", async () => {
       await manager.init();
       expect(await manager.isInitialized()).toBe(true);
     });
   });
 
   describe("scanWorkflows", () => {
-    test("应该扫描所有 markdown 文件", async () => {
+    test("should scan all markdown files", async () => {
       await manager.init();
 
       const workflowsPath = manager.getWorkflowsPath();
@@ -66,7 +66,7 @@ describe("CentralManager", () => {
       expect(workflows.map((w) => w.name)).toEqual(["test1.md", "test2.md"]);
     });
 
-    test("空目录应该返回空数组", async () => {
+    test("should return empty array for empty directory", async () => {
       await manager.init();
       const workflows = await manager.scanWorkflows();
       expect(workflows).toEqual([]);
@@ -74,7 +74,7 @@ describe("CentralManager", () => {
   });
 
   describe("getWorkflow", () => {
-    test("应该获取指定的 workflow 文件", async () => {
+    test("should get specific workflow file", async () => {
       await manager.init();
 
       const workflowsPath = manager.getWorkflowsPath();
@@ -90,7 +90,7 @@ describe("CentralManager", () => {
       expect(workflow?.content).toBe("# Test Content");
     });
 
-    test("不存在的文件应该返回 null", async () => {
+    test("should return null for non-existent file", async () => {
       await manager.init();
       const workflow = await manager.getWorkflow("nonexistent.md");
       expect(workflow).toBeNull();

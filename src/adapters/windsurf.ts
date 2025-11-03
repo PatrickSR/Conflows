@@ -23,6 +23,23 @@ import type { IDEAdapter, WorkflowIR } from "../types/index.js";
 export class WindsurfAdapter implements IDEAdapter {
   name = "windsurf";
   dirPath = ".windsurf/workflows";
+  
+  installationPaths = {
+    darwin: [
+      '/Applications/Windsurf.app'
+    ],
+    win32: [
+      '%PROGRAMFILES%\\Windsurf',
+      '%PROGRAMFILES(X86)%\\Windsurf',
+      '%LOCALAPPDATA%\\Programs\\Windsurf'
+    ],
+    linux: [
+      '/usr/local/bin/windsurf',
+      '/opt/windsurf',
+      '~/.local/bin/windsurf',
+      '~/.local/share/windsurf'
+    ]
+  };
 
   /**
    * Parse to intermediate representation

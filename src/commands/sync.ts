@@ -1,6 +1,7 @@
 import { CentralManager } from '../core/central-manager.js';
 import { Distributor } from '../core/distributor.js';
 import { logger } from '../utils/logger.js';
+import { IDEDetector } from '../utils/ide-detector.js';
 import type { SyncOptions, ResolvedConfig } from '../types/index.js';
 
 /** Default IDE list */
@@ -50,9 +51,32 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
       return;
     }
 
-    // Build final config (using hardcoded defaults)
+    // Determine target IDEs
+    let targetIDEs: string[] = options.ides || DEFAULT_IDES;
+
+    // Auto-detect installed IDEs if not explicitly specified
+    if (!options.ides) {
+      const detection = IDEDetector.getDetectionSummary(DEFAULT_IDES);
+      targetIDEs = detection.installed;
+
+      // Show detection results
+      if (targetIDEs.length > 0) {
+        logger.info(`🔍 Auto-detected IDEs: ${targetIDEs.join(', ')}`);
+      }
+      if (detection.skipped.length > 0) {
+        logger.info(`⚠️  Not detected: ${detection.skipped.join(', ')} (skipped)`);
+      }
+
+      if (targetIDEs.length === 0) {
+        logger.warn('⚠️  No supported IDEs detected on this system');
+        logger.info('Please install Cursor or Windsurf, or use --ides to specify target IDEs');
+        return;
+      }
+    }
+
+    // Build final config
     const resolvedConfig: ResolvedConfig = {
-      ides: options.ides || DEFAULT_IDES,
+      ides: targetIDEs,
       workflows,
       include: options.include || [],
       exclude: options.exclude || [],
