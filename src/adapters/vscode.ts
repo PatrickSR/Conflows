@@ -17,6 +17,11 @@ export class VscodeAdapter implements IDEAdapter {
   commandDirPath = '.vscode/prompts';
   ruleDirPath = '.github/instructions';
   
+  /** @deprecated Use commandDirPath instead */
+  get dirPath() {
+    return this.commandDirPath;
+  }
+  
   installationPaths = {
     darwin: [
       '/Applications/Visual Studio Code.app'

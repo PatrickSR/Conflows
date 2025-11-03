@@ -43,6 +43,12 @@ export class CentralManager {
   async isInitialized(): Promise<boolean> {
     return await fs.exists(this.commandsPath) || await fs.exists(this.rulesPath);
   }
+  
+  /** Check if legacy workflows directory exists */
+  async hasLegacyWorkflows(): Promise<boolean> {
+    const legacyPath = path.join(this.centralPath, 'workflows');
+    return await fs.exists(legacyPath);
+  }
 
   /** Initialize central directory */
   async init(): Promise<void> {

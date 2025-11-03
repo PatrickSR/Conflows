@@ -19,6 +19,16 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
       logger.info('Please run: conflows init');
       process.exit(1);
     }
+    
+    // Check for legacy workflows directory
+    if (await centralManager.hasLegacyWorkflows()) {
+      logger.warn('\n⚠️  Legacy workflows directory detected!');
+      logger.warn(`Found: ${centralManager.getCentralPath()}/workflows/`);
+      logger.warn('Please manually move files to:');
+      logger.warn(`  Commands: ${centralManager.getCommandsPath()}`);
+      logger.warn(`  Rules: ${centralManager.getRulesPath()}`);
+      logger.warn('Note: Consider converting files to .mdc format with namespace config\n');
+    }
 
     // Use current directory
     const projectDir = process.cwd();
