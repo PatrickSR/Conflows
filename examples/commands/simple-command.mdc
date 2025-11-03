@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/PatrickSR/Conflows/main/schema/conflows-mdc.schema.json
+---
+description: "Simple AI assistant command"
+---
+
+# Simple Command
+
+Please help me with this task.

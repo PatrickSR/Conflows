@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/PatrickSR/Conflows/main/schema/conflows-mdc.schema.json",
+  "title": "Conflows MDC File",
+  "description": "Schema for Conflows .mdc command and rule files",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string",
+      "description": "Description of the command or rule"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags for categorization (reserved for future use)"
+    },
+    "cursor": {
+      "type": "object",
+      "description": "Cursor IDE specific configuration",
+      "properties": {
+        "alwaysApply": {
+          "type": "boolean",
+          "description": "(Rules only) Always apply this rule",
+          "default": false
+        },
+        "patterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "(Rules only) File patterns to match (glob format)"
+        }
+      },
+      "additionalProperties": true
+    },
+    "windsurf": {
+      "type": "object",
+      "description": "Windsurf IDE specific configuration",
+      "properties": {
+        "auto_execution_mode": {
+          "type": "integer",
+          "enum": [1, 3],
+          "description": "(Commands only) Execution mode: 1=Safe mode, 3=Turbo mode"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["always", "auto", "specific", "disabled"],
+          "description": "(Rules only) Rule application mode"
+        },
+        "patterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "(Rules only) File patterns to match (glob format)"
+        }
+      },
+      "additionalProperties": true
+    },
+    "vscode": {
+      "type": "object",
+      "description": "VSCode IDE specific configuration",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["agent", "ask", "edit"],
+          "description": "(Commands only) Command execution mode",
+          "default": "agent"
+        },
+        "model": {
+          "type": "string",
+          "description": "(Commands only) AI model to use (e.g., GPT-4.1)",
+          "examples": ["GPT-4.1", "GPT-4", "Claude-3.5"]
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["edit", "search", "run", "read"]
+          },
+          "description": "(Commands only) Available tools for the command",
+          "default": []
+        },
+        "applyTo": {
+          "type": "string",
+          "description": "(Rules only) File pattern to apply (glob format)",
+          "examples": ["**/*.ts", "**/*.{ts,tsx}", "src/**/*.js"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

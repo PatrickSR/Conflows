@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/PatrickSR/Conflows/main/schema/conflows-mdc.schema.json
+---
+description: "AI code review assistant with multi-IDE configuration"
+tags: ["review", "quality"]
+
+cursor:
+  # Cursor doesn't need special command configuration
+
+windsurf:
+  auto_execution_mode: 3  # Turbo mode for faster execution
+
+vscode:
+  mode: agent
+  model: "GPT-4.1"
+  tools:
+    - edit
+    - search
+---
+
+# Code Review
+
+Please review the code changes carefully and provide feedback on:
+
+1. **Code Quality**: Check for code smells, anti-patterns, and maintainability issues
+2. **Best Practices**: Ensure adherence to language-specific best practices
+3. **Potential Bugs**: Identify any logical errors or edge cases
+4. **Performance**: Look for performance bottlenecks or inefficiencies
+5. **Security**: Check for potential security vulnerabilities
+
+Provide constructive feedback with specific suggestions for improvement.

@@ -17,7 +17,7 @@ tools:
 
 Test content`;
 
-      const ir = adapter.parseCommand(content, 'test.md');
+      const ir = adapter.parseCommand(content, 'test.prompt.md');
       
       expect(ir.name).toBe('test');
       expect(ir.description).toBe('Test command');
@@ -39,7 +39,7 @@ windsurf:
 
 Content`;
 
-      const ir = adapter.parseCommand(content, 'multi.md');
+      const ir = adapter.parseCommand(content, 'multi.prompt.md');
       
       expect(ir.vscode?.mode).toBe('ask');
       expect(ir.windsurf?.auto_execution_mode).toBe(3);
@@ -91,7 +91,7 @@ applyTo: "**/*.ts"
 
 Use TypeScript`;
 
-      const ir = adapter.parseRule(content, 'ts-rule.md');
+      const ir = adapter.parseRule(content, 'ts-rule.instructions.md');
       
       expect(ir.name).toBe('ts-rule');
       expect(ir.description).toBe('TS Rule');
@@ -120,8 +120,13 @@ Use TypeScript`;
 
   describe('adapter properties', () => {
     it('should have correct paths', () => {
-      expect(adapter.commandDirPath).toBe('.vscode/prompts');
+      expect(adapter.commandDirPath).toBe('.github/prompts');
       expect(adapter.ruleDirPath).toBe('.github/instructions');
+    });
+
+    it('should have correct file extensions', () => {
+      expect(adapter.commandFileExtension).toBe('.prompt.md');
+      expect(adapter.ruleFileExtension).toBe('.instructions.md');
     });
 
     it('should have correct name', () => {

@@ -6,16 +6,18 @@ import type { IDEAdapter, CommandIR, RuleIR } from '../types/index.js';
  * 
  * VSCode uses markdown format with YAML frontmatter for both commands and rules
  * 
- * Command format (.vscode/prompts/):
- * Markdown with YAML frontmatter containing mode, description, model, and tools
+ * Command format (.github/prompts/):
+ * Files named *.prompt.md with YAML frontmatter containing mode, description, model, and tools
  * 
  * Rule format (.github/instructions/):
- * Markdown with YAML frontmatter containing applyTo and description
+ * Files named *.instructions.md with YAML frontmatter containing applyTo and description
  */
 export class VscodeAdapter implements IDEAdapter {
   name = 'vscode';
-  commandDirPath = '.vscode/prompts';
+  commandDirPath = '.github/prompts';
   ruleDirPath = '.github/instructions';
+  commandFileExtension = '.prompt.md';
+  ruleFileExtension = '.instructions.md';
   
   /** @deprecated Use commandDirPath instead */
   get dirPath() {
@@ -55,7 +57,7 @@ export class VscodeAdapter implements IDEAdapter {
     };
     
     return {
-      name: filename.replace('.md', ''),
+      name: filename.replace(/\.prompt\.md$/, ''),
       description: data.description || '',
       content: parsed.content.trim(),
       tags: data.tags,
@@ -104,7 +106,7 @@ export class VscodeAdapter implements IDEAdapter {
     };
     
     return {
-      name: filename.replace('.md', ''),
+      name: filename.replace(/\.instructions\.md$/, ''),
       description: data.description || '',
       content: parsed.content.trim(),
       tags: data.tags,
