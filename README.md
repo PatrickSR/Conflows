@@ -211,9 +211,9 @@ Central storage uses `.mdc` (Markdown with Context) format:
 
 | IDE | Commands | Rules |
 |-----|----------|-------|
-| **Cursor** | `.cursor/commands/` (plain markdown) | `.cursor/rules/` (.mdc with frontmatter) |
-| **Windsurf** | `.windsurf/workflows/` (with frontmatter) | `.windsurf/rules/` (with frontmatter) |
-| **VSCode** | `.vscode/prompts/` (with frontmatter) | `.github/instructions/` (with frontmatter) |
+| **Cursor** | `.cursor/commands/*.md` | `.cursor/rules/*.mdc` |
+| **Windsurf** | `.windsurf/workflows/*.md` | `.windsurf/rules/*.md` |
+| **VSCode** | `.github/prompts/*.prompt.md` | `.github/instructions/*.instructions.md` |
 
 ### Configuration Examples
 
@@ -252,6 +252,23 @@ vscode:
   applyTo: "**/*.ts"  # glob pattern
 ---
 ```
+
+## Documentation
+
+- 📖 [Usage Guide](docs/USAGE.md) - Complete guide to creating and using commands/rules
+- 📋 [Configuration Reference](docs/REFERENCE.md) - Full reference for all configuration fields
+- 🛠️ [IDE Setup Guide](docs/IDE-SETUP.md) - Enable IntelliSense for .mdc files
+- 📁 [Examples](examples/) - Sample command and rule files
+
+## IDE IntelliSense
+
+Get auto-completion and type checking for `.mdc` files by adding this line to the top:
+
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/PatrickSR/Conflows/main/schema/conflows-mdc.schema.json
+```
+
+See [IDE Setup Guide](docs/IDE-SETUP.md) for details.
 
 ## Development
 

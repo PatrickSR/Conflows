@@ -1,6 +1,6 @@
 {
   "name": "conflows",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Centralized IDE workflow manager - Context + Workflow",
   "type": "module",
   "author": "Patrick",
@@ -22,6 +22,9 @@
   ],
   "files": [
     "dist",
+    "schema",
+    "examples",
+    "docs",
     "README.md",
     "LICENSE"
   ],
