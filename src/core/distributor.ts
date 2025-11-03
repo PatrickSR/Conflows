@@ -43,34 +43,34 @@ export class Distributor {
     const workflows = Array.from(workflowFiles);
 
     if (workflows.length === 0) {
-      logger.warn('没有需要同步的 workflow');
+      logger.warn('No workflows to sync');
       return;
     }
 
     // Show sync plan
-    logger.info(`\n🎯 项目: ${absProjectPath}`);
-    logger.info(`📦 模式: ${dryRun ? '预览' : '执行'}`);
+    logger.info(`\n🎯 Project: ${absProjectPath}`);
+    logger.info(`📦 Mode: ${dryRun ? 'Preview' : 'Execute'}`);
     logger.info(`   IDEs: ${config.ides.join(', ')}`);
     logger.info('');
-    logger.info(`📋 同步文件 (${workflows.length} 个):`);
+    logger.info(`📋 Sync files (${workflows.length} total):`);
     
     workflows.forEach(w => {
       logger.info(`   ✓ ${w}`);
     });
     
     logger.info('');
-    logger.info('📁 目标目录:');
+    logger.info('📁 Target directories:');
     config.ides.forEach(ide => {
       const adapter = getAdapter(ide);
-      logger.info(`   → ${adapter.dirPath} (${workflows.length} 个文件)`);
+      logger.info(`   → ${adapter.dirPath} (${workflows.length} files)`);
     });
 
     if (dryRun) {
-      logger.info('\n💡 移除 --dry-run 选项以执行同步');
+      logger.info('\n💡 Remove --dry-run option to execute sync');
       return;
     }
 
-    logger.info('\n开始同步...');
+    logger.info('\nStarting sync...');
 
     let syncCount = 0;
 
@@ -87,7 +87,7 @@ export class Distributor {
         const workflow = await this.centralManager.getWorkflow(workflowName);
         
         if (!workflow) {
-          logger.warn(`⚠️  找不到文件: ${workflowName}`);
+          logger.warn(`⚠️  File not found: ${workflowName}`);
           continue;
         }
 
@@ -108,6 +108,6 @@ export class Distributor {
       }
     }
 
-    logger.success(`\n✅ 完成! 已同步 ${workflows.length} 个 workflow 到 ${config.ides.length} 个 IDE`);
+    logger.success(`\n✅ Complete! Synced ${workflows.length} workflows to ${config.ides.length} IDEs`);
   }
 }

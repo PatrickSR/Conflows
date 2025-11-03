@@ -35,25 +35,25 @@ export class ConflictResolver {
     const choices = new Map<string, 'from' | 'to' | 'skip'>();
     
     for (const conflict of conflicts) {
-      logger.warn(`\n⚠️  冲突: ${conflict.filename}`);
+      logger.warn(`\n⚠️  Conflict: ${conflict.filename}`);
       
-      logger.info(`\n${fromIde} 版本:`);
-      logger.info(`  大小: ${conflict.fromFile.size} bytes`);
-      logger.info(`  修改: ${conflict.fromFile.mtime.toLocaleString('zh-CN')}`);
+      logger.info(`\n${fromIde} version:`);
+      logger.info(`  Size: ${conflict.fromFile.size} bytes`);
+      logger.info(`  Modified: ${conflict.fromFile.mtime.toLocaleString('en-US')}`);
       
-      logger.info(`\n${toIde} 版本:`);
-      logger.info(`  大小: ${conflict.toFile.size} bytes`);
-      logger.info(`  修改: ${conflict.toFile.mtime.toLocaleString('zh-CN')}`);
+      logger.info(`\n${toIde} version:`);
+      logger.info(`  Size: ${conflict.toFile.size} bytes`);
+      logger.info(`  Modified: ${conflict.toFile.mtime.toLocaleString('en-US')}`);
       
       const answer = await inquirer.prompt([
         {
           type: 'list',
           name: 'choice',
-          message: '保留哪个版本?',
+          message: 'Which version to keep?',
           choices: [
-            { name: `${fromIde} 版本`, value: 'from' },
-            { name: `${toIde} 版本`, value: 'to' },
-            { name: '跳过此文件', value: 'skip' },
+            { name: `${fromIde} version`, value: 'from' },
+            { name: `${toIde} version`, value: 'to' },
+            { name: 'Skip this file', value: 'skip' },
           ],
         },
       ]);

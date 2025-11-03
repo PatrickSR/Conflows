@@ -8,32 +8,32 @@ export async function listCommand(): Promise<void> {
 
     // Check if central directory is initialized
     if (!await centralManager.isInitialized()) {
-      logger.error('❌ 中心目录未初始化');
-      logger.info('请先运行: conflow init');
+      logger.error('❌ Central directory not initialized');
+      logger.info('Please run: conflow init');
       process.exit(1);
     }
 
     const workflows = await centralManager.scanWorkflows();
 
     if (workflows.length === 0) {
-      logger.info('\n暂无 workflow 文件\n');
-      logger.info(`请在 ${centralManager.getWorkflowsPath()} 中创建 .md 文件`);
+      logger.info('\nNo workflow files found\n');
+      logger.info(`Please create .md files in ${centralManager.getWorkflowsPath()}`);
       return;
     }
 
-    logger.info(`\nWorkflows (${workflows.length} 个):\n`);
+    logger.info(`\nWorkflows (${workflows.length} files):\n`);
 
     workflows.forEach(w => {
-      const date = w.mtime.toLocaleDateString('zh-CN');
+      const date = w.mtime.toLocaleString('en-US');
       logger.info(`  ${w.name} (${w.size} bytes, ${date})`);
     });
 
     logger.info('');
   } catch (error) {
     if (error instanceof Error) {
-      logger.error(`\n❌ 错误: ${error.message}\n`);
+      logger.error(`\n❌ Error: ${error.message}\n`);
     } else {
-      logger.error('\n❌ 未知错误\n');
+      logger.error('\n❌ Unknown error\n');
     }
     process.exit(1);
   }

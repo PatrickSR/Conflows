@@ -9,29 +9,29 @@ const program = new Command();
 
 program
   .name('conflow')
-  .description('集中管理和分发 workflow 工具')
+  .description('Centralized IDE workflow manager')
   .version('0.0.2');
 
 // init command
 program
   .command('init')
-  .description('初始化中心目录')
+  .description('Initialize central directory')
   .action(initCommand);
 
 // sync command - distribute from central directory to current project
 program
   .command('sync')
-  .description('从中心目录下发所有 workflow 到当前项目')
-  .option('--ides <ides>', '指定 IDE（逗号分隔，默认: cursor,windsurf）', (value) => value.split(','))
-  .option('--include <files>', '额外包含的文件（逗号分隔）', (value) => value.split(','))
-  .option('--exclude <files>', '排除的文件（逗号分隔）', (value) => value.split(','))
-  .option('--dry-run', '预览但不实际写入')
+  .description('Distribute workflows from central directory to current project')
+  .option('--ides <ides>', 'Specify IDEs (comma-separated, default: cursor,windsurf)', (value) => value.split(','))
+  .option('--include <files>', 'Additional files to include (comma-separated)', (value) => value.split(','))
+  .option('--exclude <files>', 'Files to exclude (comma-separated)', (value) => value.split(','))
+  .option('--dry-run', 'Preview without writing')
   .action((options) => syncCommand(options));
 
 // list command
 program
   .command('list')
-  .description('列出中心目录的所有 workflows')
+  .description('List all workflows in central directory')
   .action(() => listCommand());
 
 program.parse();

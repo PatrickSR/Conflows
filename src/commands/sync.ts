@@ -14,8 +14,8 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
 
     // Check if central directory is initialized
     if (!await centralManager.isInitialized()) {
-      logger.error('❌ 中心目录未初始化');
-      logger.info('请先运行: conflow init');
+      logger.error('❌ Central directory not initialized');
+      logger.info('Please run: conflow init');
       process.exit(1);
     }
 
@@ -27,8 +27,8 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
     let workflows = allWorkflows.map(w => w.name);
     
     if (workflows.length === 0) {
-      logger.warn('⚠️  中心目录没有 workflow 文件');
-      logger.info(`请在 ${centralManager.getWorkflowsPath()} 中创建 .md 文件`);
+      logger.warn('⚠️  No workflow files in central directory');
+      logger.info(`Please create .md files in ${centralManager.getWorkflowsPath()}`);
       return;
     }
 
@@ -46,7 +46,7 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
     workflows = [...new Set(workflows)];
 
     if (workflows.length === 0) {
-      logger.warn('没有需要同步的 workflow');
+      logger.warn('No workflows to sync');
       return;
     }
 
@@ -62,9 +62,9 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
     await distributor.distribute(projectDir, resolvedConfig, options.dryRun || false);
   } catch (error) {
     if (error instanceof Error) {
-      logger.error(`\n❌ 错误: ${error.message}\n`);
+      logger.error(`\n❌ Error: ${error.message}\n`);
     } else {
-      logger.error('\n❌ 未知错误\n');
+      logger.error('\n❌ Unknown error\n');
     }
     process.exit(1);
   }

@@ -6,30 +6,30 @@ export async function initCommand(): Promise<void> {
   try {
     const manager = new CentralManager();
     
-    // 检查是否已初始化
+    // Check if already initialized
     if (await manager.isInitialized()) {
-      logger.warn(`中心目录已存在: ${manager.getCentralPath()}`);
-      logger.info('如需重新初始化，请先删除该目录');
+      logger.warn(`Central directory already exists: ${manager.getCentralPath()}`);
+      logger.info('To reinitialize, please delete the directory first');
       return;
     }
 
-    logger.info('初始化中心目录...\n');
+    logger.info('Initializing central directory...\n');
 
     await manager.init();
 
-    logger.success('✅ 初始化完成!\n');
-    logger.info(`Workflows 目录: ${manager.getWorkflowsPath()}`);
+    logger.success('✅ Initialization complete!\n');
+    logger.info(`Workflows directory: ${manager.getWorkflowsPath()}`);
     logger.info('');
-    logger.info('接下来:');
-    logger.info(`  1. 在 ${manager.getWorkflowsPath()} 中创建 .md 文件`);
-    logger.info('  2. cd 到项目目录');
-    logger.info('  3. 运行 conflow sync');
+    logger.info('Next steps:');
+    logger.info(`  1. Create .md files in ${manager.getWorkflowsPath()}`);
+    logger.info('  2. cd to your project directory');
+    logger.info('  3. Run conflow sync');
     logger.info('');
   } catch (error) {
     if (error instanceof Error) {
-      logger.error(`\n❌ 错误: ${error.message}\n`);
+      logger.error(`\n❌ Error: ${error.message}\n`);
     } else {
-      logger.error('\n❌ 未知错误\n');
+      logger.error('\n❌ Unknown error\n');
     }
     process.exit(1);
   }
